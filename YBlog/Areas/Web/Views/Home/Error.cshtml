@@ -1,0 +1,17 @@
+﻿@inject YBlog.Services.ICacheService cacheService
+<h1 style="text-align:center;margin-top:80px;">出错了</h1>
+<p style="text-align:center;margin:20px 0;"><img src="@cacheService.GetAssetsUrl("/assets/images/error.gif")" width="200"></p>
+<div style="max-width:650px;margin:auto;font-size:16px;line-height:32px;padding:0 12px;">
+    <p>
+        在此期间，请您尝试以下操作：
+    </p>
+    <p>
+        1. 刷新页面：点击浏览器的刷新按钮，有时可以解决临时性的问题。
+    </p>
+    <p>
+        2. 返回首页：点击 <a href="/">这里</a> 返回网站首页，您可以从那里继续浏览其他内容。
+    </p>
+    <p>
+        3. 稍后再试：如果问题仍然存在，请稍后再访问我们, 我们将尽快修复问题。
+    </p>
+</div>

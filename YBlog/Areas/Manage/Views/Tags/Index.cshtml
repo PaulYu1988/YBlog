@@ -1,0 +1,66 @@
+@{
+    var query = ViewBag.Query as TagPagedQuery;
+    var tagCounts = ViewBag.TagCounts as List<TagCount>;
+}
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/tags'
+        });
+    </script>
+}
+@model List<Tag>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>标签</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <input type="text" name="Text" placeholder="标签" class="layui-input" value="@query?.Text">
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>标签</th>
+                        <th>关联文章数</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var tagCount = tagCounts?.FirstOrDefault(x => x.TagId == item.Id);
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Text</td>
+                            <td><a href="/tags/@item.Id" target="_blank">@(tagCount?.Count ?? 0)</a></td>
+                            <td>@item.LastModifiedAt.ToDateTimeString()</td>
+                            <td>
+                                <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <partial name="_Pagination" />
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

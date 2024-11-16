@@ -1,0 +1,162 @@
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var category = ViewBag.Category as Category;
+    var comments = ViewBag.Comments as List<CommentView>;
+    var tags = ViewBag.Tags as List<Tag>;
+}
+@model Article
+@section Styles {
+    <link rel="stylesheet" href="@cacheService.GetAssetsUrl("/assets/prismjs/prism.css")" />
+    <link rel="stylesheet" href="~/css/jquery.sharebar.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="@cacheService.GetAssetsUrl("/assets/prismjs/prism.js")"></script>
+    <script src="~/js/jquery.form.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.sharebar.js" asp-append-version="true"></script>
+    <script>
+        $('form').initForm({
+            verify: {
+                CommentContent: function (value, elem) {
+                    if (!value) {
+                        return '请输入评论内容';
+                    }
+                }
+            },
+            success: function (response) {
+                document.location.reload();
+            },
+            error: function (response) {
+                $('.captcha-img').attr('src', '/common/captcha?rnd=' + Math.random());
+                $('input[name="Captcha"]').val('');
+            },
+            hasCaptcha: true
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/articles/userinteractions/@(Model.Id)',
+            dataType: 'json',
+            success: function (response) {
+                $('#share-bar').shareBar({
+                    articleId: @(Model.Id),
+                    datas: {
+                        like: {
+                            checked: response.likeChecked,
+                            count: response.likeCount
+                        },
+                        favorite: {
+                            checked: response.favoriteChecked,
+                            count: response.favoriteCount
+                        }
+                    }
+                });
+            },
+            error: function (response) {
+                $('#share-bar').shareBar({
+                    articleId: @(Model.Id),
+                    datas: {
+                        like: {
+                            checked: false,
+                            count: 0
+                        },
+                        favorite: {
+                            checked: false,
+                            count: 0
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs12 layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <span class="layui-breadcrumb">
+                    <a href="/">首页</a>
+                    @if (category != null)
+                    {
+                        <a href="/categories/@category.Id"><cite>@category.Name</cite></a>
+                    }
+                </span>
+            </div>
+            <div class="layui-card-body">
+                <h1 class="layui-font-24">@Model.Title</h1>
+                <div class="article-tags">
+                    <i class="layui-icon layui-icon-date layui-font-12">
+                        @Model.CreatedAt.ToViewString()
+                    </i>
+                    <i class="layui-icon layui-icon-eye layui-font-12">
+                        @Model.ReadCount
+                    </i>
+                    <i class="layui-icon layui-icon-dialogue layui-font-12">
+                        @Model.CommentCount
+                    </i>
+                    @if (tags != null && tags.Any())
+                    {
+                        <i class="layui-icon layui-icon-note layui-font-12">
+                            @foreach (var item in tags)
+                            {
+                                <a class="layui-font-12">@item.Text</a>
+                            }
+                        </i>
+                    }
+                </div>
+                <partial name="_Advertisement" model="EnumAdvertisementCodes.ArticleTop" />
+                <div class="article-content">
+                    @Html.Raw(Model.ArticleContent)
+                </div>
+                <partial name="_Advertisement" model="EnumAdvertisementCodes.ArticleBottom" />
+                <div id="share-bar"></div>
+            </div>
+        </div>
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-dialogue"> 评论</i>
+            </div>
+            <div class="layui-card-body">
+                <form class="layui-form" action="/articles/comments">
+                    <input type="hidden" name="ArticleId" value="@Model.Id" />
+                    <div class="layui-form-item">
+                        <textarea name="CommentContent" placeholder="请输入内容" lay-verify="CommentContent" autocomplete="off" class="layui-textarea"></textarea>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="captcha-container">
+                            <button type="submit" class="layui-btn" lay-submit>提交</button>
+                        </div>
+                    </div>
+                </form>
+                @if (comments != null && comments.Any())
+                {
+                    <div class="article-comments">
+                        <ul>
+                            @foreach (var item in comments)
+                            {
+                                var avatar = new Avatar()
+                                {
+                                    Url = item.Avatar,
+                                    Nickname = item.Nickname,
+                                    UserId = item.UserId
+                                };
+                                <li>
+                                    <partial name="_Avatar" model="avatar" />
+                                    <div>
+                                        <p>@item.Nickname <span class="layui-font-gray">@item.CreatedAt.ToViewString()</span></p>
+                                        <p><a href="/articles/@item.ArticleId">@item.CommentContent</a></p>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs12 layui-col-md3 sticky">
+        <partial name="_Advertisement" model="EnumAdvertisementCodes.RightTop" />
+        <partial name="_Summary" />
+        <partial name="_Search" />
+        <partial name="_RelatedArticles" />
+        <partial name="_Advertisement" model="EnumAdvertisementCodes.RightBottom" />
+    </div>
+</div>

@@ -1,0 +1,30 @@
+@{
+    var summary = ViewBag.Summary as List<SummaryItem>;
+}
+@if (summary != null && summary.Any())
+{
+    <div class="layui-card">
+        <div class="layui-card-header"><i class="layui-icon layui-icon-list layui-font-green"> 概要</i></div>
+        <div class="layui-card-body">
+            <ul class="summary-list">
+                @foreach (var item in summary)
+                {
+                    <li>
+                        <a href="#@(item.Id)">@item.Text</a>
+                        @if (item.Children.Any())
+                        {
+                            <ul>
+                                @foreach (var child in item.Children)
+                                {
+                                    <li>
+                                        <a href="#@(child.Id)">@child.Text</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

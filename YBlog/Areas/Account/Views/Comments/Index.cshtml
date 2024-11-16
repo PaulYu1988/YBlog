@@ -1,0 +1,58 @@
+@{
+    var query = ViewBag.Query as CommentPagedQuery;
+}
+@model List<CommentView>
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/account/comments'
+        });
+    </script>
+}
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs12 layui-col-md3">
+        <partial name="_UserInfo" />
+        <partial name="_Menu" />
+    </div>
+    <div class="layui-col-xs12 layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <span class="layui-breadcrumb">
+                    <a href="/account">账户管理</a>
+                    <a><cite>我的评论</cite></a>
+                </span>
+            </div>
+            <div class="layui-card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <table class="layui-table" lay-even>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>内容</th>
+                                <th>发布时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.CommentContent</td>
+                                    <td>@item.CreatedAt.ToDateTimeString()</td>
+                                    <td>
+                                        <a href="/articles/@item.ArticleId" target="_blank" class="layui-btn layui-bg-blue layui-btn-xs">查看</a>
+                                        <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                <partial name="_Pagination" />
+            </div>
+        </div>
+    </div>
+</div>

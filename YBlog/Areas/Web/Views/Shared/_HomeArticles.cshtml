@@ -1,0 +1,37 @@
+﻿@{
+    var articles = ViewBag.HomeArticles as List<Article>;
+}
+<div class="layui-card">
+    <div class="layui-card-header"><i class="layui-icon layui-icon-list layui-font-green"> 最新文章</i></div>
+    <div class="layui-card-body">
+        <partial name="_Advertisement" model="EnumAdvertisementCodes.HomeListTop" />
+        @if (articles != null)
+        {
+            <div class="article-list">
+                <ul>
+                    @foreach (var item in articles)
+                    {
+                        <li>
+                            <div class="article-item">
+                                @if (!string.IsNullOrWhiteSpace(item.Thumbnail))
+                                {
+                                    <img src="@item.Thumbnail" />
+                                }
+                                <div class="article-description">
+                                    <a href="/articles/@item.Id" class="layui-font-16">@item.Title</a>
+                                    <div class="tag-items">
+                                        <i class="layui-icon layui-icon-date layui-font-12"> @item.CreatedAt.ToViewString()</i>
+                                        <i class="layui-icon layui-icon-eye layui-font-12"> @item.ReadCount</i>
+                                        <i class="layui-icon layui-icon-dialogue layui-font-12"> @item.CommentCount</i>
+                                    </div>
+                                    <p>@item.Description</p>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        <partial name="_Advertisement" model="EnumAdvertisementCodes.HomeListBottom" />
+    </div>
+</div>

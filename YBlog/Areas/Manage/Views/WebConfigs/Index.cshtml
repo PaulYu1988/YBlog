@@ -1,0 +1,92 @@
+@model List<WebConfig>
+@section Scripts {
+    <script src="~/js/jquery.upload.js"></script>
+    <script src="~/js/jquery.form.js"></script>
+    <script>
+        $('form').initForm({
+            success: function (result) {
+                document.location.reload();
+            }
+        });
+    </script>
+    @foreach (var item in Model)
+    {
+        if (item.ConfigKey == "Watermark" || item.ConfigKey == "Logo")
+        {
+            <script>
+                $(".@(item.ConfigKey)-upload").initUpload({
+                    name: '@item.ConfigKey',
+                    labelText: '@Html.Raw(item.Name)',
+                    uploadButtonText: '选择文件',
+                    defaultUrl: '@item.ConfigValue'
+                });
+            </script>
+        }
+    }
+}
+@section Styles {
+    <style>
+        .layui-form-label {
+            display: none;
+        }
+
+        .layui-input-block {
+            margin-left: 0;
+            width: 280px;
+        }
+    </style>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>设置</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row">
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>配置名称</th>
+                        <th>值</th>
+                        <th>修改时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>
+                                @if (item.ConfigKey == "Analytics" || item.ConfigKey == "Copyright" || item.ConfigKey == "MetaKeywords" || item.ConfigKey == "MetaDescription")
+                                {
+                                    <textarea rows="5" name="@item.ConfigKey" placeholder="" class="layui-textarea">@item.ConfigValue</textarea>
+                                }
+                                else if (item.ConfigKey == "Watermark" || item.ConfigKey == "Logo")
+                                {
+                                    <div class="@(item.ConfigKey)-upload"></div>
+                                }
+                                else
+                                {
+                                    <input type="text" name="@item.ConfigKey" placeholder="" autocomplete="off" class="layui-input" value="@item.ConfigValue">
+                                }
+                                <p>
+                                    @item.Description
+                                </p>
+                            </td>
+                            <td>@item.LastModifiedAt.ToDateTimeString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div style="margin-top:12px;">
+                <button type="submit" class="layui-btn" lay-submit>提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+@inject ICacheService cacheService
+@{
+    var webConfig = cacheService.GetWebConfigView();
+    var navs = cacheService.GetNavs();
+    var parentNavs = navs.Where(x => x.ParentId == null);
+    var userState = Context.Request.GetUserState();
+    var path = Context.Request.Path.Value ?? string.Empty;
+    if (path.StartsWith("/articles"))
+    {
+        var category = ViewBag.Category as Category;
+        if (category != null)
+        {
+            path = "/categories/" + category.Id;
+        }
+    }
+    var themeMode = Context.Request.GetThemeMode();
+}
+<header>
+    <div class="header-container">
+        <div class="site-name layui-font-green layui-font-24">
+            @if (!string.IsNullOrWhiteSpace(webConfig.Logo))
+            {
+                <img src="@webConfig.Logo" alt="logo" />
+            }
+            @if (!string.IsNullOrWhiteSpace(webConfig?.SiteName))
+            {
+                <span>@webConfig?.SiteName</span>
+            }
+        </div>
+        <div class="header-nav layui-hide-xs">
+            <ul class="layui-nav">
+                @foreach (var item in parentNavs)
+                {
+                    var childNavs = navs.Where(x => x.ParentId == item.Id);
+                    <li class="@(!childNavs.Any()&&((path == "/" && item.Url == "/")||(item.Url != "/" && path.Contains(item.Url)))?"layui-nav-item layui-this":"layui-nav-item")">
+                        <a href="@(string.IsNullOrWhiteSpace(item.Url)?"javascript:;":item.Url)" target="@(((EnumTargets)item.Target).GetDescription())">@item.Text</a>
+                        @if (childNavs.Any())
+                        {
+                            <dl class="layui-nav-child">
+                                @foreach (var child in childNavs)
+                                {
+                                    <dd @Html.Raw((path == "/" && child.Url == "/") || (child.Url != "/" && path.Contains(child.Url)) ? "class=\"layui-this\"" : string.Empty)><a href="@(string.IsNullOrWhiteSpace(child.Url)?"javascript:;":child.Url)" target="@(((EnumTargets)child.Target).GetDescription())">@child.Text</a></dd>
+                                }
+                            </dl>
+                        }
+                    </li>
+                }
+                @if (userState.IsLogin)
+                {
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            @{
+                                var avatar = new Avatar()
+                {
+                    Url = userState.Avatar,
+                    Nickname = userState.Nickname,
+                    UserId = userState.Id,
+                    IsHeader = true
+                };
+                            }
+                            <partial name="_Avatar" model="avatar" />
+                            @userState.Nickname
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="/account"><i class="layui-icon layui-icon-username"> 账户管理</i></a></dd>
+                            @if (userState.Type == YBlog.Models.Enums.EnumUserTypes.Admin)
+                            {
+                                <dd><a href="/manage"><i class="layui-icon layui-icon-console"> 控制台</i></a></dd>
+                            }
+                            <hr>
+                            <dd><a href="/logout"><i class="layui-icon layui-icon-return"> 退出</i></a></dd>
+                        </dl>
+                    </li>
+                }
+                else
+                {
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="@cacheService.GetAssetsUrl("/assets/images/avatar.jpg")" class="layui-nav-img">
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="/register"><i class="layui-icon layui-icon-addition"> 注册</i></a></dd>
+                            <dd><a href="/login"><i class="layui-icon layui-icon-username"> 登录</i></a></dd>
+                        </dl>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="mode-container">
+            <div class="layui-form ws-header-theme" lay-filter="header-theme">
+                <input type="checkbox" name="theme-mode" @Html.Raw(themeMode == EnumThemeModes.Dark ? "checked" : string.Empty) lay-filter="header-theme-mode" lay-skin="switch" title="" />
+                <div lay-checkbox="">
+                    <i class="layui-icon layui-icon-moon"></i> |
+                    <i class="layui-icon layui-icon-light"></i>
+                </div>
+            </div>
+        </div>
+        <div class="nav-more">
+            <i class="layui-icon layui-icon-slider layui-font-24"></i>
+        </div>
+    </div>
+</header>

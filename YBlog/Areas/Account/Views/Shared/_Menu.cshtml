@@ -1,0 +1,21 @@
+@{
+    var path = Context.Request.Path.Value ?? string.Empty;
+}
+<div class="layui-card">
+    <div class="layui-card-body">
+        <ul class="layui-menu">
+            <li @Html.Raw(path == "/account" ? "class=\"layui-menu-item-checked\"" : string.Empty)>
+                <div class="layui-menu-body-title"><a href="/account">用户信息</a></div>
+            </li>
+            <li @Html.Raw(path == "/account/comments" ? "class=\"layui-menu-item-checked\"" : string.Empty)>
+                <div class="layui-menu-body-title"><a href="/account/comments">我的评论</a></div>
+            </li>
+            <li @Html.Raw(path == "/account/favorites" ? "class=\"layui-menu-item-checked\"" : string.Empty)>
+                <div class="layui-menu-body-title"><a href="/account/favorites">我的收藏</a></div>
+            </li>
+            <li @Html.Raw(path == "/account/changepassword" ? "class=\"layui-menu-item-checked\"" : string.Empty)>
+                <div class="layui-menu-body-title"><a href="/account/changepassword">修改密码</a></div>
+            </li>
+        </ul>
+    </div>
+</div>

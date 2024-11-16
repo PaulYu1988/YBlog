@@ -1,0 +1,77 @@
+@{
+    var query = ViewBag.Query as CommentPagedQuery;
+}
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/comments'
+        });
+    </script>
+}
+@model List<CommentView>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">内容管理</a>
+            <a><cite>评论</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <select name="Status">
+                    <option value="">状态</option>
+                    @foreach (EnumCommentStatuses item in Enum.GetValues(typeof(EnumCommentStatuses)))
+                    {
+                        if (query?.Status == (int)item)
+                        {
+                            <option value="@((int)item)" selected>@item.GetDescription()</option>
+                        }
+                        else
+                        {
+                            <option value="@((int)item)">@item.GetDescription()</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>内容</th>
+                        <th>发布时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.CommentContent</td>
+                            <td>@item.CreatedAt.ToDateTimeString()</td>
+                            <td>
+                                <a href="/articles/@item.ArticleId" target="_blank" class="layui-btn layui-bg-blue layui-btn-xs">查看</a>
+                                <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <partial name="_Pagination" />
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

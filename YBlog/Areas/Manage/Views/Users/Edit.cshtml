@@ -1,0 +1,162 @@
+@model UserRequest
+@section Styles {
+    <style>
+        .layui-upload-list img {
+            max-width: 160px !important;
+        }
+    </style>
+}
+@section Scripts {
+    <script src="~/js/jquery.upload.js"></script>
+    <script>
+        function initUpload(defaultUrl) {
+            $('.upload-form-item').initUpload({
+                name: 'Avatar',
+                labelText: '头像',
+                uploadButtonText: '选择文件',
+                defaultUrl: defaultUrl
+            });
+        }
+        initUpload('@(Model.Avatar)');
+        $('form').initForm({
+            verify: {
+                Nickname: function (value, elem) {
+                    if (value.length > 12) {
+                        return '昵称不能超过12个字符';
+                    }
+                    if (value.length < 4) {
+                        return '昵称不能少于4个字符';
+                    }
+                },
+                Job: function (value, elem) {
+                    if (value) {
+                        if (value.length > 12) {
+                            return '职业不能超过12个字符';
+                        }
+                        if (value.length < 2) {
+                            return '职业不能少于2个字符';
+                        }
+                    }
+                },
+                Introduction: function (value, elem) {
+                    if (value) {
+                        if (value.length > 300) {
+                            return '职业不能超过300个字符';
+                        }
+                        if (value.length < 8) {
+                            return '职业不能少于8个字符';
+                        }
+                    }
+                }
+            },
+            success: function (result) {
+                if (result && result.avatar) {
+                    $('.upload-form-item').empty();
+                    initUpload(result.avatar);
+                }
+            }
+        });
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a href="/manage/users">用户</a>
+            <a><cite>编辑</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body layui-row">
+        <form class="layui-form">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Nickname" lay-verify="required|Nickname" placeholder="" autocomplete="off" class="layui-input" value="@Model.Nickname">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">职业</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Job" lay-verify="Job" placeholder="" autocomplete="off" class="layui-input" value="@Model.Job">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户类型</label>
+                    <div class="layui-input-block">
+                        <select name="Type" lay-verify="required">
+                            <option value="">请选择</option>
+                            @foreach (EnumUserTypes item in Enum.GetValues(typeof(EnumUserTypes)))
+                            {
+                                if (Model.Type == (int)item)
+                                {
+                                    <option value="@((int)item)" selected>@item.GetDescription()</option>
+                                }
+                                else
+                                {
+                                    <option value="@((int)item)">@item.GetDescription()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <select name="Status" lay-verify="required">
+                            <option value="">请选择</option>
+                            @foreach (EnumUserStatuses item in Enum.GetValues(typeof(EnumUserStatuses)))
+                            {
+                                if (Model.Status == (int)item)
+                                {
+                                    <option value="@((int)item)" selected>@item.GetDescription()</option>
+                                }
+                                else
+                                {
+                                    <option value="@((int)item)">@item.GetDescription()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手机</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Mobile" lay-verify="number" placeholder="" autocomplete="off" class="layui-input" value="@Model.Mobile">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Email" lay-verify="email" placeholder="" autocomplete="off" class="layui-input" value="@Model.Email">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">介绍</label>
+                <div class="layui-input-block">
+                    <textarea autocomplete="off" name="Introduction" lay-verify="Introduction" class="layui-textarea">@Model.Introduction</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item upload-form-item"></div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                    <button type="submit" class="layui-btn" lay-submit>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

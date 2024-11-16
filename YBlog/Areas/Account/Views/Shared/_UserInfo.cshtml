@@ -1,0 +1,25 @@
+@using YBlog.Models.Custom
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var userState = Context.Request.GetUserState();
+}
+@if (userState.IsLogin)
+{
+    var avatar = new Avatar()
+    {
+        Url = userState.Avatar,
+        Nickname = userState.Nickname,
+        UserId = userState.Id
+    };
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="user-info">
+                <partial name="_Avatar" model="avatar" />
+                <div class="user-detail">
+                    <span>@userState.Nickname</span>
+                    <p>@userState.Type.GetDescription()</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

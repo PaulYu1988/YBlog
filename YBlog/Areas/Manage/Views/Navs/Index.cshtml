@@ -1,0 +1,127 @@
+@{
+    var parents = Model?.Where(x => x.ParentId == null).ToList();
+}
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/navs'
+        });
+        layui.util.on('lay-on', {
+            alert: function () {
+                layui.layer.alert('建议将一级导航 URL 设置为空，<br />否则移动设备无法点开二级菜单。', { title: '提示' });
+            }
+        });
+    </script>
+}
+@model List<Nav>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>导航</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-btn-container">
+                <a href="/manage/navs/edit" class="layui-btn">添加</a>
+            </div>
+        </form>
+        @if (parents != null && parents.Any())
+        {
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>文字</th>
+                        <th>打开方式</th>
+                        <th>Url</th>
+                        <th>状态</th>
+                        <th>排序</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in parents)
+                    {
+                        var children = Model?.Where(x => x.ParentId == item.Id).ToList();
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>
+                                <strong>@item.Text</strong>
+                            </td>
+                            <td>@(((EnumTargets)item.Target).GetDescription())</td>
+                            <td>
+
+                                @if (!string.IsNullOrWhiteSpace(item.Url) && children != null && children.Any())
+                                {
+                                    <i class="layui-icon layui-icon-tips layui-font-12 layui-font-orange" lay-on="alert" style="cursor:pointer;"> @item.Url</i>
+                                }
+                                else
+                                {
+                                    <span>@item.Url</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsEnabled)
+                                {
+                                    <span class="layui-badge layui-bg-green">启用</span>
+                                }
+                                else
+                                {
+                                    <span class="layui-badge layui-bg-black">禁用</span>
+                                }
+                            </td>
+                            <td>@item.Sort</td>
+                            <td>
+                                <a href="/manage/navs/edit?parentid=@item.Id" class="layui-btn layui-bg-blue layui-btn-xs">添加</a>
+                                <a href="/manage/navs/edit/@item.Id" class="layui-btn layui-btn-xs">编辑</a>
+                                @if (children == null || !children.Any())
+                                {
+                                    <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                                }
+                            </td>
+                        </tr>
+                        @if (children != null && children.Any())
+                        {
+                            @foreach (var child in children)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>
+                                        <i class="layui-icon layui-icon-right"></i>
+                                        @child.Text
+                                    </td>
+                                    <td>@(((EnumTargets)child.Target).GetDescription())</td>
+                                    <td>@child.Url</td>
+                                    <td>
+                                        @if (child.IsEnabled)
+                                        {
+                                            <span class="layui-badge layui-bg-green">启用</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="layui-badge layui-bg-black">禁用</span>
+                                        }
+                                    </td>
+                                    <td>@child.Sort</td>
+
+                                    <td>
+                                        <a href="/manage/navs/edit/@child.Id" class="layui-btn layui-btn-xs">编辑</a>
+                                        <a data-id="@child.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

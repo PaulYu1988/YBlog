@@ -1,0 +1,173 @@
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var categories = ViewBag.Categories as List<Category>;
+    var tags = ViewBag.Tags as List<Tag>;
+    if (tags == null)
+    {
+        tags = new List<Tag>();
+    }
+    var selected = new List<string>();
+    if (!string.IsNullOrWhiteSpace(Model?.Tags))
+    {
+        var temp = Model.Tags.Split(',');
+        foreach (var tag in temp)
+        {
+            selected.Add(tag);
+        }
+    }
+}
+@model ArticleRequest
+@section Scripts {
+    <script src="@cacheService.GetAssetsUrl("/assets/tinymce/tinymce.min.js")"></script>
+    <script src="~/js/jquery.tinymce.js"></script>
+    <script src="~/js/jquery.tags.js"></script>
+    <script src="~/js/jquery.upload.js"></script>
+    <script>
+        function initUpload(defaultUrl) {
+            $('.upload-form-item').initUpload({
+                name: 'Thumbnail',
+                labelText: '缩略图',
+                uploadButtonText: '选择文件',
+                defaultUrl: defaultUrl
+            });
+        }
+        $('form').initForm({
+            verify: {
+                Title: function (value, elem) {
+                    if (value.length > 60) {
+                        return '标题不能超过60个字符';
+                    }
+                },
+                ArticleContent: function (value, elem) {
+                    if (!value) {
+                        return '请输入文章正文';
+                    }
+                }
+            },
+            success: function (result) {
+                if (result && result.thumbnail) {
+                    $('.upload-form-item').empty();
+                    initUpload(result.thumbnail);
+                }
+            }
+        });
+        $(".tags-form-item").initTags({
+            name: 'Tags',
+            addButtonText: '添加',
+            selected: [@Html.Raw(selected.Any() ? $"'{string.Join("','", selected)}'" : "")],
+            tags: [@Html.Raw(tags.Any() ? $"'{string.Join("','", tags.Select(x => x.Text))}'" : "")],
+            labelText: '标签'
+        });
+        $('#ArticleContent').initTinymce({
+            height: 500
+        });
+        initUpload('@Model?.Thumbnail');
+    </script>
+}
+@if (Model != null)
+{
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <span class="layui-breadcrumb">
+                <a href="">控制台</a>
+                <a href="">内容管理</a>
+                <a href="">文章</a>
+                <a><cite>编辑</cite></a>
+            </span>
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form layui-row">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">分类</label>
+                        <div class="layui-input-block">
+                            <select name="CategoryId" lay-verify="required">
+                                <option value="">请选择</option>
+                                @if (categories != null)
+                                {
+                                    foreach (var item in categories)
+                                    {
+                                        if (Model.CategoryId == item.Id)
+                                        {
+                                            <option value="@item.Id" selected>@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <select name="Status" lay-verify="required">
+                                <option value="">请选择</option>
+                                @foreach (EnumArticleStatuses item in Enum.GetValues(typeof(EnumArticleStatuses)))
+                                {
+                                    if (Model.Status == item)
+                                    {
+                                        <option value="@((int)item)" selected>@item.GetDescription()</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@((int)item)">@item.GetDescription()</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="Title" lay-verify="required|Title" placeholder="" autocomplete="off" class="layui-input" value="@Model.Title">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">置顶</label>
+                        <div class="layui-input-block">
+                            @if (Model.IsTop)
+                            {
+                                <input type="checkbox" name="IsTop" value="true" checked lay-skin="switch" title="是|否">
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="IsTop" value="true" lay-skin="switch" title="是|否">
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item tags-form-item">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-block">
+                        <textarea name="Description" placeholder="meta-description" class="layui-textarea">@Model.Description</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">正文</label>
+                    <div class="layui-input-block">
+                        <textarea id="ArticleContent" lay-verify="ArticleContent" name="ArticleContent">@Model.ArticleContent</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item upload-form-item"></div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                        <button type="submit" class="layui-btn" lay-submit>提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+}

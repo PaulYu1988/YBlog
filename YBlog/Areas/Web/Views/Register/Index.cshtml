@@ -1,0 +1,117 @@
+@section Scripts {
+    <script src="~/js/jquery.form.js" asp-append-version="true"></script>
+    <script>
+        $('form').initForm({
+            verify: {
+                Username: function (value, elem) {
+                    if (value.length < 8) {
+                        return '用户名不能少于8个字符';
+                    }
+                    if (value.length > 16) {
+                        return '用户名不能超过16个字符';
+                    }
+                },
+                Password: function (value, elem) {
+                    if (value.length < 8) {
+                        return '密码不能少于8个字符';
+                    }
+                    if (value.length > 16) {
+                        return '密码不能超过16个字符';
+                    }
+                },
+                ConfirmPassword: function (value, item) {
+                    var passwordValue = $('input[name="Password"]').val();
+                    if (value !== passwordValue) {
+                        return '两次密码输入不一致';
+                    }
+                },
+                Nickname: function (value, elem) { 
+                    if (value) { 
+                        if (value.length > 16) { 
+                            return '昵称不能超过16个字符';
+                        }
+                    }
+                }
+            },
+            success: function (result) {
+                if (result && result.from) {
+                    document.location = result.from;
+                } else {
+                    document.location = '/';
+                }
+            },
+            error: function (response) {
+                $('.captcha-img').attr('src', '/common/captcha?t=' + new Date().getTime());
+                document.getElementsByTagName("form")[0].reset();
+            },
+            successMessage: '注册成功',
+            errorMessage: '注册失败',
+            hasCaptcha: true
+        });
+    </script>
+}
+<form class="layui-form">
+    <div class="demo-reg-container" style="width: 320px; margin: 48px auto 0;">
+        <div class="layui-form-item">
+            <h1 style="text-align: center;">注册</h1>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                </div>
+                <input type="text" name="Username" value="" lay-verify="required|Username" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="Password" value="" lay-verify="required|Password" placeholder="密码" autocomplete="off" class="layui-input" id="reg-password" lay-affix="eye">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="ConfirmPassword" value="" lay-verify="required|ConfirmPassword" placeholder="确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                </div>
+                <input type="text" name="Nickname" value="" lay-verify="Nickname" placeholder="昵称（选填）" autocomplete="off" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-row">
+                <div class="layui-col-xs7">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-vercode"></i>
+                        </div>
+                        <input type="text" name="Captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                    </div>
+                </div>
+                <div class="layui-col-xs5">
+                    <div style="margin-left: 10px;">
+                        <img class="captcha-img" src="/common/captcha" onclick="this.src='/common/captcha?t='+ new Date().getTime();">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <input type="checkbox" name="StayLogin" value="true" lay-skin="primary" title="保持登录">
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-reg">注册</button>
+        </div>
+        <div class="layui-form-item demo-reg-other" style="text-align:center;">
+            <a href="/login">登录已有帐号</a>
+        </div>
+    </div>
+</form>

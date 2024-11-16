@@ -1,0 +1,59 @@
+@{
+    var xmlFileInfo = ViewBag.XmlFileInfo as FileInfo;
+    var txtFileInfo = ViewBag.TxtFileInfo as FileInfo;
+    var siteAddress = $"{Context.Request.Scheme}://{Context.Request.Host}";
+}
+@section Scripts {
+    <script src="~/js/jquery.form.js"></script>
+    <script>
+        $('form').initForm({
+            success: function (result) {
+                document.location.reload();
+            },
+            successMessage: '生成成功',
+            errorMessage: '生成失败',
+            successMessageType: 'msg',
+            errorMessageType: 'msg'
+        });
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>Sitemap</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row">
+            <div class="layui-panel" style="padding:16px;">
+                @if (xmlFileInfo != null && xmlFileInfo.Exists)
+                {
+                    <div>
+                        sitemap.xml 已生成，生成时间 @(xmlFileInfo.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"))<br />
+                        <a target="_blank" href="/sitemap.xml">@(siteAddress)/sitemap.xml</a>
+                    </div>
+                }
+                else
+                {
+                    <div>sitemap.xml 不存在</div>
+                }
+                @if (txtFileInfo != null && txtFileInfo.Exists)
+                {
+                    <div>
+                        sitemap.txt 已生成，生成时间 @(txtFileInfo.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"))<br />
+                        <a target="_blank" href="/sitemap.txt">@(siteAddress)/sitemap.txt</a>
+                    </div>
+                }
+                else
+                {
+                    <div>sitemap.txt 不存在</div>
+                }
+            </div>
+            <div style="margin-top:12px;">
+                <button type="submit" class="layui-btn" lay-submit>生成</button>
+            </div>
+        </form>
+    </div>
+</div>

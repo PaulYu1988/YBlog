@@ -1,0 +1,2 @@
+﻿Run this cmd to update your models from the database
+dotnet ef dbcontext scaffold --output-dir Database --context-dir Database "Server=;Database=;User=;Password=;Encrypt=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -c YBlogContext --force

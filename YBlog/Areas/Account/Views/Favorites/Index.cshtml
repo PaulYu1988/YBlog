@@ -1,0 +1,66 @@
+@{
+    var query = ViewBag.Query as UserInteractionViewPagedQuery;
+}
+@model List<UserInteractionView>
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/account/favorites'
+        });
+    </script>
+}
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs12 layui-col-md3">
+        <partial name="_UserInfo" />
+        <partial name="_Menu" />
+    </div>
+    <div class="layui-col-xs12 layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <span class="layui-breadcrumb">
+                    <a href="/account">账户管理</a>
+                    <a><cite>我的收藏</cite></a>
+                </span>
+            </div>
+            <div class="layui-card-body">
+                <form class="layui-form layui-row layui-col-space16">
+                    <div class="layui-col-sm3">
+                        <input type="text" name="Title" placeholder="标题" class="layui-input" value="@query?.Title">
+                    </div>
+                    <div class="layui-btn-container">
+                        <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+                    </div>
+                </form>
+                @if (Model != null && Model.Any())
+                {
+                    <table class="layui-table" lay-even>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>标题</th>
+                                <th>添加时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.Title</td>
+                                    <td>@item.CreatedAt.ToDateTimeString()</td>
+                                    <td>
+                                        <a href="/articles/@item.ArticleId" target="_blank" class="layui-btn layui-bg-blue layui-btn-xs">查看</a>
+                                        <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                <partial name="_Pagination" />
+            </div>
+        </div>
+    </div>
+</div>

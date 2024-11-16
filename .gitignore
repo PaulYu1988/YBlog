@@ -1,0 +1,16 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs
+/YBlog/.vs
+/YBlog/bin
+/YBlog/obj
+/YBlog/Properties/PublishProfiles
+/YBlog/wwwroot/upload
+/YBlog/wwwroot/sitemap.xml
+/YBlog/wwwroot/sitemap.txt
+/YBlog.Models/bin
+/YBlog.Models/obj
+/YBlog.Services/bin
+/YBlog.Services/obj

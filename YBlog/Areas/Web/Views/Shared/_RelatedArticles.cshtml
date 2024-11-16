@@ -1,0 +1,21 @@
+@{
+    var relatedArticles = ViewBag.RelatedArticles as List<Article>;
+}
+@if (relatedArticles != null && relatedArticles.Any())
+{
+    <div class="layui-card">
+        <div class="layui-card-header"><i class="layui-icon layui-icon-senior layui-font-green"> 相关文章</i></div>
+        <div class="layui-card-body">
+            <div class="common-list">
+                <ul>
+                    @foreach(var item in relatedArticles)
+                    {
+                        <li>
+                            <a href="/articles/@item.Id">@item.Title</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}

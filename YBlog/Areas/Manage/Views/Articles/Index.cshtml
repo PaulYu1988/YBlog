@@ -1,0 +1,108 @@
+﻿@{
+    var query = ViewBag.Query as ArticlePagedQuery;
+    var categories = ViewBag.Categories as List<Category>;
+}
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/articles'
+        });
+    </script>
+}
+@model List<Article>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">内容管理</a>
+            <a><cite>文章</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <input type="text" name="Title" placeholder="标题" class="layui-input" value="@query?.Title">
+            </div>
+            @if (categories != null && categories.Any())
+            {
+                <div class="layui-col-sm3">
+                    <select name="CategoryId">
+                        <option value="">分类</option>
+                        @foreach (var item in categories)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class="layui-col-sm3">
+                <select name="Status">
+                    <option value="">状态</option>
+                    @foreach (EnumArticleStatuses item in Enum.GetValues(typeof(EnumArticleStatuses)))
+                    {
+                        if (query?.Status == (int)item)
+                        {
+                            <option value="@((int)item)" selected>@item.GetDescription()</option>
+                        }
+                        else
+                        {
+                            <option value="@((int)item)">@item.GetDescription()</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+                <a href="/manage/articles/edit" class="layui-btn">添加</a>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>分类</th>
+                        <th>标题</th>
+                        <th>阅读/评论</th>
+                        <th>修改时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>
+                                @{
+                                    var category = categories?.FirstOrDefault(x => x.Id == item.CategoryId);
+                                }
+                                @category?.Name
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.Thumbnail))
+                                {
+                                    <i class="layui-icon layui-icon-picture"></i>
+                                }
+                                <a href="/articles/@item.Id" target="_blank">@item.Title</a>
+                            </td>
+                            <td>@(item.ReadCount)/@(item.CommentCount)</td>
+                            <td>@item.LastModifiedAt.ToDateTimeString()</td>
+                            <td>
+                                <a href="/manage/articles/edit/@item.Id" class="layui-btn layui-btn-xs">编辑</a>
+                                <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <partial name="_Pagination" />
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

@@ -1,0 +1,152 @@
+@{
+    var categories = ViewBag.Categories as List<Category>;
+    var parent = ViewBag.Parent as Nav;
+}
+@model NavRequest
+@section Scripts {
+    <script>
+        $('form').initForm({
+            verify: {
+                Text: function (value, elem) {
+                    if (value.length > 16) {
+                        return '文字不能超过16个字符';
+                    }
+                }
+            }
+        });
+        layui.use(function () {
+            layui.form.on('select(link-type)', function (data) {
+                $('input[name="Url"]').val(data.value);
+            });
+        });
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a href="/manage/navs">导航</a>
+            <a><cite>编辑</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            @if (parent != null)
+            {
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上级导航</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid layui-font-red">@parent.Text</div>
+                            <input type="hidden" name="ParentId" value="@parent.Id" />
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">打开方式</label>
+                    <div class="layui-input-block">
+                        <select name="Target" lay-verify="required">
+                            <option value="">请选择</option>
+                            @foreach (EnumTargets item in Enum.GetValues(typeof(EnumTargets)))
+                            {
+                                if (Model.Target == (int)item)
+                                {
+                                    <option value="@((int)item)" selected>@item.GetDescription()</option>
+                                }
+                                else
+                                {
+                                    <option value="@((int)item)">@item.GetDescription()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">文字</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Text" lay-verify="required|Text" placeholder="" autocomplete="off" class="layui-input" value="@Model.Text">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">链接类型</label>
+                    <div class="layui-input-block">
+                        <select lay-filter="link-type">
+                            <optgroup label="自定义">
+                                <option value="">填写链接</option>
+                            </optgroup>
+                            <optgroup label="站内链接">
+                                @if (Model.Url == "/")
+                                {
+                                    <option value="/" selected>首页</option>
+                                }
+                                else
+                                {
+                                    <option value="/">首页</option>
+                                }
+                                @if (categories != null && categories.Any())
+                                {
+                                    @foreach (var item in categories)
+                                    {
+                                        if (Model.Url == "/categories/" + item.Id)
+                                        {
+                                            <option value="/categories/@item.Id" selected>@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="/categories/@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                }
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Url</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Url" placeholder="" autocomplete="off" class="layui-input" value="@Model.Url">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Sort" lay-verify="required|number" placeholder="" autocomplete="off" class="layui-input" value="@Model.Sort">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        @if (Model.IsEnabled == true)
+                        {
+                            <input type="checkbox" name="IsEnabled" value="true" checked lay-skin="switch" title="启用|禁用">
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="IsEnabled" value="true" lay-skin="switch" title="启用|禁用">
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                    <button type="submit" class="layui-btn" lay-submit>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

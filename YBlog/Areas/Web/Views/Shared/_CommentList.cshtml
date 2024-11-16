@@ -1,0 +1,32 @@
+﻿@inject YBlog.Services.ICacheService cacheService
+@{
+    var items = ViewBag.CommentList as List<CommentView>;
+}
+@if (items != null && items.Any())
+{
+    <div class="layui-card">
+        <div class="layui-card-header"><i class="layui-icon layui-icon-chat layui-font-green"> 评论</i></div>
+        <div class="layui-card-body">
+            <div class="comment-list">
+                <ul>
+                    @foreach (var item in items)
+                    {
+                        var avatar = new Avatar()
+                        {
+                            Url = item.Avatar,
+                            Nickname = item.Nickname,
+                            UserId = item.UserId
+                        };
+                        <li>
+                            <partial name="_Avatar" model="avatar" />
+                            <div>
+                                <p>@(item.Nickname ?? "匿名用户") <span class="layui-font-gray">@item.CreatedAt.ToViewString()</span></p>
+                                <p><a href="/articles/@item.ArticleId">@item.CommentContent</a></p>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}

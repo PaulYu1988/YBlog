@@ -1,0 +1,79 @@
+@using System.Text.RegularExpressions
+@using YBlog.Models.Queries
+@{
+    var extendCount = 2;
+    var query = ViewBag.Query as PagedQuery;
+    var url = Context.Request.Path + Context.Request.QueryString;
+    Regex regex = new Regex("page=\\d+", RegexOptions.IgnoreCase);
+    if (regex.IsMatch(url))
+    {
+        url = regex.Replace(url, "page={0}");
+    }
+    else
+    {
+        if (url.Contains("?"))
+        {
+            url += "&page={0}";
+        }
+        else
+        {
+            url += "?page={0}";
+        }
+    }
+}
+@if (query != null && query.PageCount > 1)
+{
+    <div id="pagination">
+        <div class="layui-box layui-laypage layui-laypage-default">
+            @if (query.Page > 1)
+            {
+                <a class="layui-laypage-prev" href="@string.Format(url,query.Page-1)">上一页</a>
+            }
+            else
+            {
+                <a class="layui-laypage-prev layui-disabled">上一页</a>
+            }
+            @if (query.Page - extendCount - 1 == 1)
+            {
+                <a class="layui-laypage-first" title="首页" href="@string.Format(url,1)">1</a>
+            }
+            @if (query.Page - extendCount > 2)
+            {
+                <a class="layui-laypage-first" title="首页" href="@string.Format(url,1)">1</a>
+                <span class="layui-laypage-spr">…</span>
+            }
+            @for (int i = extendCount; i > 0; i--)
+            {
+                if (query.Page - i >= 1)
+                {
+                    <a href="@string.Format(url,query.Page-i)">@(query.Page - i)</a>
+                }
+            }
+            <span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>@query.Page</em></span>
+            @for (int i = 1; i <= extendCount; i++)
+            {
+                if (query.Page + i <= query.PageCount)
+                {
+                    <a href="@string.Format(url,query.Page+i)">@(query.Page + i)</a>
+                }
+            }
+            @if (query.Page + extendCount + 2 <= query.PageCount)
+            {
+                <span class="layui-laypage-spr">…</span>
+                <a class="layui-laypage-last" title="尾页" href="@string.Format(url,query.PageCount)">@query.PageCount</a>
+            }
+            @if (query.Page + extendCount + 1 == query.PageCount)
+            {
+                <a class="layui-laypage-last" title="尾页" href="@string.Format(url,query.PageCount)">@query.PageCount</a>
+            }
+            @if (query.Page < query.PageCount)
+            {
+                <a class="layui-laypage-next" href="@string.Format(url,query.Page+1)">下一页</a>
+            }
+            else
+            {
+                <a class="layui-laypage-next layui-disabled">下一页</a>
+            }
+        </div>
+    </div>
+}

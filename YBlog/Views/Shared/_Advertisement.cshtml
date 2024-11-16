@@ -1,0 +1,33 @@
+@inject ICacheService cacheService
+@model EnumAdvertisementCodes
+@{
+    var showAd = true;
+    var showAdSession = Context.Session.GetBool(EnumSessionNames.ShowAd.ToString());
+    if (showAdSession.HasValue)
+    {
+        showAd = showAdSession.Value;
+    }
+    else
+    {
+        var ip = Context.Request.GetRequestIpAddress();
+        var configs = cacheService.GetWebConfigView();
+        if (!string.IsNullOrWhiteSpace(configs.AdIPWhitelist) && !string.IsNullOrWhiteSpace(ip))
+        {
+            var ips = configs.AdIPWhitelist.Split(',');
+            if (ips.Contains(ip))
+            {
+                showAd = false;
+            }
+        }
+        Context.Session.SetBool(EnumSessionNames.ShowAd.ToString(), showAd);
+    }
+    if (showAd)
+    {
+        var advertisements = cacheService.GetAdvertisements();
+        var curr = advertisements.FirstOrDefault(x => x.Code == Model.ToString());
+        if (curr != null)
+        {
+            @Html.Raw(curr.AdvertisementContent)
+        }
+    }
+}

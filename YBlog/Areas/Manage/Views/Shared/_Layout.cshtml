@@ -1,0 +1,97 @@
+@using YBlog.Extensions
+@using YBlog.Models.Custom
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var userState = Context.Request.GetUserState();
+    var webConfigs = cacheService.GetWebConfigView();
+}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@webConfigs.SiteName 管理后台</title>
+    <link rel="stylesheet" href="@cacheService.GetAssetsUrl("/assets/layui/css/layui.css")" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">
+                <div class="layui-logo-container">
+                    @if (string.IsNullOrWhiteSpace(webConfigs.Logo))
+                    {
+                        <img src="/favicon.ico" />
+                    }
+                    else
+                    {
+                        <img src="@webConfigs.Logo" />
+                    }
+                    <span>@webConfigs.SiteName</span>
+                </div>
+            </div>
+            <ul class="layui-nav">
+                <li class="layui-nav-item layui-show-xs-inline-block " lay-header-event="menuLeft">
+                    <i class="layui-icon layui-icon-spread-left layui-hide-sm menu-icon"></i>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        @{
+                            var avatar = new Avatar()
+                            {
+                                Url = userState.Avatar,
+                                Nickname = userState.Nickname,
+                                UserId = userState.Id,
+                                IsHeader = true
+                            };
+                        }
+                        <partial name="_Avatar" model="avatar" />
+                        @userState.Nickname
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/logout">退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-side layui-bg-black layui-hide-xs">
+            <partial name="_Menu" />
+        </div>
+        <div class="layui-body">
+            <div class="layui-padding-2">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="@cacheService.GetAssetsUrl("/assets/jquery-3.5.1/dist/jquery.min.js")"></script>
+    <script src="@cacheService.GetAssetsUrl("/assets/layui/layui.js")"></script>
+    <script src="~/js/jquery.form.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        layui.use(['element', 'layer', 'util'], function () {
+            var element = layui.element;
+            var layer = layui.layer;
+            var util = layui.util;
+            var $ = layui.$;
+            util.event('lay-header-event', {
+                menuLeft: function (othis) {
+                    var side = $('.layui-side');
+                    if (side.is(":hidden")) {
+                        $('.menu-icon').removeClass('layui-icon-spread-left');
+                        $('.menu-icon').addClass('layui-icon-shrink-right');
+                        side.removeClass('layui-hide-xs');
+                    } else {
+                        $('.menu-icon').removeClass('layui-icon-shrink-right');
+                        $('.menu-icon').addClass('layui-icon-spread-left');
+                        side.addClass('layui-hide-xs');
+                    }
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

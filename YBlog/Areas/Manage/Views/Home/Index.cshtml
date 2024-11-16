@@ -1,0 +1,235 @@
+@using YBlog.Extensions
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var operations = ViewBag.Operations as List<OperationView>;
+    var userState = Context.Request.GetUserState();
+    var logs = ViewBag.Logs as List<Log>;
+    var avatar = new Avatar()
+    {
+        Url = userState.Avatar,
+        Nickname = userState.Nickname,
+        UserId = userState.Id
+    };
+}
+@model DashboardView
+@section Scripts {
+    <script src="@cacheService.GetAssetsUrl("/assets/echarts-5.5.0/echarts.min.js")"></script>
+    <script src="/js/dashboard.js" asp-append-version="true"></script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a><cite>控制台</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md3 layui-col-sm6">
+                <div class="layui-card layui-bg-red">
+                    <div class="layui-card-body dashboard-card">
+                        <h3>@userState.Nickname</h3>
+                        <div class="dashboard-card-userinfo">
+                            <partial name="_Avatar" model="avatar" />
+                            <div style="padding-left: 12px;">
+                                用户类型：@userState.Type.GetDescription()
+                                <br />
+                                IP: @Context.Request.GetRequestIpAddress()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3 layui-col-sm6">
+                <div class="layui-card layui-bg-orange">
+                    <div class="layui-card-body dashboard-card">
+                        <h3>用户</h3>
+                        <div>
+                            今日注册：@Model.TodayRegisterCount
+                            <br />
+                            今日登录：@Model.TodayLoginCount
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3 layui-col-sm6">
+                <div class="layui-card layui-bg-blue">
+                    <div class="layui-card-body dashboard-card">
+                        <h3>内容</h3>
+                        <div>
+                            文章数量：@Model.ArticleCount
+                            <br />
+                            评论数量：@Model.CommentCount
+                            <br />
+                            标签数量：@Model.TagCount
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3 layui-col-sm6">
+                <div class="layui-card layui-bg-green">
+                    <div class="layui-card-body dashboard-card">
+                        <h3>运行状态</h3>
+                        <div>
+                            进程名称：@Model.ProcessName
+                            <br />
+                            占用内存：@Model.MemoryUsage MB
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space10" style="margin-top: 16px;">
+            <div class="layui-col-sm6">
+                <div class="layui-padding-2">
+                    <div id="chart1" style="width: 100%; height: 280px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-sm6">
+                <div class="layui-padding-2">
+                    <div id="chart2" style="width: 100%; height: 280px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space10" style="margin-top: 12px;">
+            <div class="layui-col-sm6">
+                <div class="layui-padding-2">
+                    <h3 style="margin-bottom: 12px;">操作记录</h3>
+                    @if (operations != null && operations.Any())
+                    {
+                        <div class="layui-timeline">
+                            @foreach (var item in operations)
+                            {
+                                <div class="layui-timeline-item">
+                                    @switch (item.Type)
+                                    {
+                                        case (int)EnumOperationTypes.Login:
+                                            <i class="layui-icon layui-timeline-axis layui-icon-username layui-bg-blue"></i>
+                                            break;
+                                        case (int)EnumOperationTypes.Create:
+                                            <i class="layui-icon layui-timeline-axis layui-icon-add-1 layui-bg-green"></i>
+                                            break;
+                                        case (int)EnumOperationTypes.Delete:
+                                            <i class="layui-icon layui-timeline-axis layui-icon-delete layui-bg-red"></i>
+                                            break;
+                                        case (int)EnumOperationTypes.Update:
+                                            <i class="layui-icon layui-timeline-axis layui-icon-edit layui-bg-orange"></i>
+                                            break;
+                                        default:
+                                            <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                                            break;
+                                    }
+                                    <div class="layui-timeline-content layui-text">
+                                        <div class="layui-timeline-title">
+                                            @item.CreatedAt.ToDateTimeString("yyyy-MM-dd HH:mm:ss fff")
+                                            @item.User?.Nickname
+                                            @(((EnumOperationTypes)item.Type).GetDescription())
+                                            @if (item.Reference != null)
+                                            {
+                                                @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription())
+                                                switch (item.ReferenceType)
+                                                {
+                                                    case (int)EnumOperationReferenceTypes.User:
+                                                        var user = item.Reference as User;
+                                                        <a href="/manage/users/edit/@user?.Id">@user?.Nickname</a> @item.Description
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Category:
+                                                        var category = item.Reference as Category;
+                                                        <a href="/manage/categories/edit/@category?.Id">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Article:
+                                                        var article = item.Reference as Article;
+                                                        <a href="/manage/articles/edit/@article?.Id">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Tag:
+                                                        var tag = item.Reference as Tag;
+                                                        <a href="/manage/tags?Text=@Html.UrlEncoder.Encode(item.Description??string.Empty)">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Comment:
+                                                        var comment = item.Reference as Comment;
+                                                        <a href="/articles/@comment?.ArticleId">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Nav:
+                                                        var nav = item.Reference as Nav;
+                                                        <a href="/manage/navs/edit/@nav?.Id">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Link:
+                                                        var link = item.Reference as Link;
+                                                        <a href="/manage/links/edit/@link?.Id">@item.Description</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Advertisement:
+                                                        var advertisement = item.Reference as Advertisement;
+                                                        <a href="/manage/advertisements/edit/@advertisement?.Id">@item.Description</a>
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                switch (item.ReferenceType)
+                                                {
+                                                    case (int)EnumOperationReferenceTypes.User:
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Category:
+                                                    case (int)EnumOperationReferenceTypes.Article:
+                                                    case (int)EnumOperationReferenceTypes.Tag:
+                                                    case (int)EnumOperationReferenceTypes.Comment:
+                                                    case (int)EnumOperationReferenceTypes.Nav:
+                                                    case (int)EnumOperationReferenceTypes.Link:
+                                                    case (int)EnumOperationReferenceTypes.Advertisement:
+                                                        @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription())
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.WebConfig:
+                                                        @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription()) <a href="/manage/webconfigs">查看</a>
+                                                        break;
+                                                    case (int)EnumOperationReferenceTypes.Sitemap:
+                                                        @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription()) <a href="/manage/sitemaps">查看</a>
+                                                        break;
+                                                }
+                                                <span>@item.Description</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="layui-col-sm6">
+                <div class="layui-padding-2">
+                    <h3 style="margin-bottom: 12px;">系统日志</h3>
+                    @if (logs != null && logs.Any())
+                    {
+                        <ul>
+                            @foreach (var item in logs)
+                            {
+                                var typeString = ((EnumLogTypes)item.Type).GetDescription();
+                                <li style="padding-bottom: 4px;">
+                                    @switch (item.Type)
+                                    {
+                                        case (int)EnumLogTypes.Info:
+                                            <span class="layui-badge layui-bg-green">@typeString</span>
+                                            break;
+                                        case (int)EnumLogTypes.Warn:
+                                            <span class="layui-badge layui-bg-orange">@typeString</span>
+                                            break;
+                                        case (int)EnumLogTypes.Error:
+                                            <span class="layui-badge">@typeString</span>
+                                            break;
+                                        default:
+                                            <span class="layui-badge layui-bg-gray">@typeString</span>
+                                            break;
+                                    }
+                                    @item.CreatedAt.ToDateTimeString("yyyy-MM-dd HH:mm:ss fff")
+                                    <br />
+                                    <p class="ellipsis">
+                                        <a href="javascript:;" class="show-log">@item.LogContent</a>
+                                    </p>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

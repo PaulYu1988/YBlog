@@ -1,0 +1,92 @@
+@{
+    var query = ViewBag.Query as AdvertisementPagedQuery;
+}
+@model List<Advertisement>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">运营管理</a>
+            <a><cite>广告代码</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <select name="IsEnabled">
+                    <option value="">状态</option>
+                    @if (query?.IsEnabled == true)
+                    {
+                        <option value="true" selected>启用</option>
+                    }
+                    else
+                    {
+                        <option value="true">启用</option>
+                    }
+                    @if (query?.IsEnabled == false)
+                    {
+                        <option value="false" selected>禁用</option>
+                    }
+                    else
+                    {
+                        <option value="false">禁用</option>
+                    }
+                </select>
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>名称</th>
+                        <th>别名</th>
+                        <th>内容</th>
+                        <th>状态</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.Code</td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.AdvertisementContent))
+                                {
+                                    <span class="layui-badge layui-bg-green">已配置</span>
+                                }
+                                else
+                                {
+                                    <span class="layui-badge layui-bg-black">未配置</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsEnabled)
+                                {
+                                    <span class="layui-badge layui-bg-green">启用</span>
+                                }
+                                else
+                                {
+                                    <span class="layui-badge layui-bg-black">禁用</span>
+                                }
+                            </td>
+                            <td>@item.LastModifiedAt.ToDateTimeString()</td>
+                            <td>
+                                <a href="/manage/advertisements/edit/@item.Id" class="layui-btn layui-btn-xs">编辑</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <partial name="_Pagination" />
+    </div>
+</div>
