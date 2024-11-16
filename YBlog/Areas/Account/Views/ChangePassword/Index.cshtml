@@ -1,0 +1,69 @@
+@section Scripts {
+    <script>
+        $('form').initForm({
+            verify: {
+                Password: function (value, elem) {
+                    if (value.length < 8) {
+                        return '密码不能少于8个字符';
+                    }
+                    if (value.length > 16) {
+                        return '密码不能超过16个字符';
+                    }
+                },
+                ConfirmPassword: function (value, item) {
+                    var passwordValue = $('input[name="NewPassword"]').val();
+                    if (value !== passwordValue) {
+                        return '两次密码输入不一致';
+                    }
+                }
+            },
+            success: (result) => {
+                document.location.reload();
+            }
+        });
+    </script>
+}
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs12 layui-col-md3">
+        <partial name="_UserInfo" />
+        <partial name="_Menu" />
+    </div>
+    <div class="layui-col-xs12 layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <span class="layui-breadcrumb">
+                    <a href="/account">账户管理</a>
+                    <a><cite>修改密码</cite></a>
+                </span>
+            </div>
+            <div class="layui-card-body layui-row">
+                <form class="layui-form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">旧密码</label>
+                        <div class="layui-input-block">
+                            <input name="Password" lay-verify="required|Password" autocomplete="off" type="password" lay-affix="eye" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">新密码</label>
+                        <div class="layui-input-block">
+                            <input name="NewPassword" lay-verify="required|Password" autocomplete="off" type="password" lay-affix="eye" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">确认密码</label>
+                        <div class="layui-input-block">
+                            <input name="ConfirmPassword" lay-verify="required|ConfirmPassword" autocomplete="off" type="password" lay-affix="eye" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit>提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

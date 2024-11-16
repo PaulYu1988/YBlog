@@ -1,0 +1,50 @@
+@model AdvertisementRequest
+@section Scripts {
+    <script>
+        $('form').initForm({});
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">运营管理</a>
+            <a href="/manage/advertisements">广告代码</a>
+            <a><cite>编辑</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="layui-col-12">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="AdvertisementContent" placeholder="" class="layui-textarea">@Model.AdvertisementContent</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-12">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        @if (Model.IsEnabled == true)
+                        {
+                            <input type="checkbox" name="IsEnabled" value="true" checked lay-skin="switch" title="启用|禁用">
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="IsEnabled" value="true" lay-skin="switch" title="启用|禁用">
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                    <button type="submit" class="layui-btn" lay-submit>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

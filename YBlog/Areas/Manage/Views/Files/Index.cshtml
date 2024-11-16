@@ -1,0 +1,89 @@
+@using System.Net
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var fileItems = ViewBag.FileItems as List<FileItem>;
+    var directoryItems = ViewBag.DirectoryItems as List<DirectoryItem>;
+    var imageExtensions = new string[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp", ".ico" };
+    var exists = ViewBag.Exists as bool?;
+    if (!exists.HasValue)
+    {
+        exists = false;
+    }
+}
+@section Scripts {
+    <script>
+        function dbClickDirectory(encodedPath) {
+            document.location = '/manage/files?path=' + encodedPath;
+        }
+        function dbClickFile(urlPath) {
+            window.open(urlPath, '_blank');
+        }
+    </script>
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/files/delete'
+        });
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>文件</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <input type="text" name="Path" placeholder="目录" class="layui-input" value="@ViewBag.Path">
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit>进入目录</i></button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="dbClickDirectory('@WebUtility.UrlEncode(ViewBag.Parent)')"><i class="layui-icon layui-icon-return"> 返回上级</i></button>
+            </div>
+        </form>
+        @if (exists == true)
+        {
+            if (directoryItems != null && directoryItems.Any())
+            {
+                foreach (var item in directoryItems)
+                {
+                    <div class="file-item" onclick="dbClickDirectory('@WebUtility.UrlEncode(item.RelativePath)')">
+                        <img src="@cacheService.GetAssetsUrl("/assets/images/folder.svg")" />
+                        <span>@item.Name</span>
+                    </div>
+                }
+            }
+            if (fileItems != null && fileItems.Any())
+            {
+                foreach (var item in fileItems)
+                {
+                    @if (item.RelativePath != null)
+                    {
+                        var urlPath = item.RelativePath.Replace("\\", "/");
+                        <div class="file-item">
+                            <div onclick="dbClickFile('@urlPath')">
+                                @if (imageExtensions.Contains(item.Extension))
+                                {
+                                    <img src="@urlPath" />
+                                }
+                                else
+                                {
+                                    <img src="@cacheService.GetAssetsUrl("/assets/images/file-earmark.svg")" />
+                                }
+                                <span>@item.Name</span>
+                            </div>
+                            <a data-id="@item.RelativePath" class="layui-btn layui-bg-red layui-btn-xs btn-delete file-item-delete"><i class="layui-icon layui-icon-delete"></i></a>
+                        </div>
+                    }
+                }
+            }
+        }
+        else
+        {
+            <div>目录不存在</div>
+        }
+    </div>
+</div>

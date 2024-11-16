@@ -1,0 +1,53 @@
+@model CategoryRequest
+@section Scripts {
+    <script>
+        $('form').initForm({
+            verify: {
+                Name: function (value, elem) {
+                    if (value.length > 8) {
+                        return '名称不能超过8个字符';
+                    }
+                }
+            }
+        });
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">内容管理</a>
+            <a href="">分类</a>
+            <a><cite>编辑</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Name" lay-verify="required|Name" placeholder="" autocomplete="off" class="layui-input" value="@Model.Name">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                    <textarea name="Description" placeholder="meta-description" class="layui-textarea">@Model.Description</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" placeholder="请输入数字" name="Sort" lay-verify="required|number" autocomplete="off" class="layui-input" value="@Model.Sort">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                    <button type="submit" class="layui-btn" lay-submit>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

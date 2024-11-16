@@ -1,0 +1,21 @@
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var path = Context.Request.Path.ToString().ToLower();
+    var menus = cacheService.GetManageMenus(path);
+}
+<div class="layui-side-scroll">
+    <ul class="layui-nav layui-nav-tree" lay-accordion>
+        @foreach (var menu in menus)
+        {
+            <li class="layui-nav-item @(menu.Active?"layui-nav-itemed":string.Empty)">
+                <a href="javascript:;"><i class="layui-icon @menu.Icon"> @menu.Text</i></a>
+                <dl class="layui-nav-child">
+                    @foreach (var item in menu.Items)
+                    {
+                        <dd @Html.Raw(item.Active ? "class=\"layui-this\"" : string.Empty)><a href="@item.Url"><i class="layui-icon @item.Icon"> @item.Text</i></a></dd>
+                    }
+                </dl>
+            </li>
+        }
+    </ul>
+</div>

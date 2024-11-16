@@ -1,0 +1,102 @@
+@{
+    var query = ViewBag.Query as LinkPagedQuery;
+}
+@section Scripts {
+    <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
+    <script>
+        $('.btn-delete').delete({
+            path: '/manage/links'
+        });
+    </script>
+}
+@model List<Link>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">运营管理</a>
+            <a><cite>友情链接</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <input type="text" name="Text" placeholder="文字" class="layui-input" value="@query?.Text">
+            </div>
+            <div class="layui-col-sm3">
+                <select name="IsEnabled">
+                    <option value="">状态</option>
+                    @if (query?.IsEnabled == true)
+                    {
+                        <option value="true" selected>启用</option>
+                    }
+                    else
+                    {
+                        <option value="true">启用</option>
+                    }
+                    @if (query?.IsEnabled == false)
+                    {
+                        <option value="false" selected>禁用</option>
+                    }
+                    else
+                    {
+                        <option value="false">禁用</option>
+                    }
+                </select>
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+                <a href="/manage/links/edit" class="layui-btn">添加</a>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>文字</th>
+                        <th>打开方式</th>
+                        <th>Url</th>
+                        <th>状态</th>
+                        <th>排序</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Text</td>
+                            <td>@(((EnumTargets)item.Target).GetDescription())</td>
+                            <td>@item.Url</td>
+                            <td>
+                                @if (item.IsEnabled)
+                                {
+                                    <span class="layui-badge layui-bg-green">启用</span>
+                                }
+                                else
+                                {
+                                    <span class="layui-badge layui-bg-black">禁用</span>
+                                }
+                            </td>
+                            <td>@item.Sort</td>
+                            <td>@item.LastModifiedAt.ToDateTimeString()</td>
+                            <td>
+                                <a href="/manage/links/edit/@item.Id" class="layui-btn layui-btn-xs">编辑</a>
+                                <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <partial name="_Pagination" />
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

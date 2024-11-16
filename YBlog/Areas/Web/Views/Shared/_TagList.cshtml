@@ -1,0 +1,15 @@
+﻿@{
+    var tags = ViewBag.TopTags as List<Tag>;
+}
+@if (tags != null && tags.Any())
+{
+    <div class="layui-card">
+        <div class="layui-card-header"><i class="layui-icon layui-icon-note layui-font-green"> 标签</i></div>
+        <div class="layui-card-body">
+            @foreach (var item in tags)
+            {
+                <a href="/tags/@item.Id" class="layui-badge layui-bg-green">@item.Text</a>
+            }
+        </div>
+    </div>
+}

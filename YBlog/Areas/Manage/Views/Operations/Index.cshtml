@@ -1,0 +1,148 @@
+@{
+    var query = ViewBag.Query as OperationPagedQuery;
+}
+@model List<OperationView>
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">站点管理</a>
+            <a><cite>操作记录</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row layui-col-space16">
+            <div class="layui-col-sm3">
+                <select name="Type">
+                    <option value="">操作类型</option>
+                    @foreach (EnumOperationTypes item in Enum.GetValues(typeof(EnumOperationTypes)))
+                    {
+                        if (query?.Type == (int)item)
+                        {
+                            <option value="@((int)item)" selected>@item.GetDescription()</option>
+                        }
+                        else
+                        {
+                            <option value="@((int)item)">@item.GetDescription()</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary" lay-submit><i class="layui-icon layui-icon-search"> 查询</i></button>
+            </div>
+        </form>
+        @if (Model != null && Model.Any())
+        {
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>用户</th>
+                        <th>操作</th>
+                        <th>时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.User?.Nickname</td>
+                            <td>
+                                @switch (item.Type)
+                                {
+                                    case (int)EnumOperationTypes.Login:
+                                        <span class="layui-font-blue">@(((EnumOperationTypes)item.Type).GetDescription())</span>
+                                        break;
+                                    case (int)EnumOperationTypes.Create:
+                                        <span class="layui-font-green">@(((EnumOperationTypes)item.Type).GetDescription())</span>
+                                        break;
+                                    case (int)EnumOperationTypes.Delete:
+                                        <span class="layui-font-red">@(((EnumOperationTypes)item.Type).GetDescription())</span>
+                                        break;
+                                    case (int)EnumOperationTypes.Update:
+                                        <span class="layui-font-orange">@(((EnumOperationTypes)item.Type).GetDescription())</span>
+                                        break;
+                                    default:
+                                        <span class="layui-font-black">@(((EnumOperationTypes)item.Type).GetDescription())</span>
+                                        break;
+                                }
+                                @if (item.Reference != null)
+                                {
+                                    @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription())
+                                    switch (item.ReferenceType)
+                                    {
+                                        case (int)EnumOperationReferenceTypes.User:
+                                            var user = item.Reference as User;
+                                            <a href="/manage/users/edit/@user?.Id">@user?.Nickname</a> @item.Description
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Category:
+                                            var category = item.Reference as Category;
+                                            <a href="/manage/categories/edit/@category?.Id">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Article:
+                                            var article = item.Reference as Article;
+                                            <a href="/manage/articles/edit/@article?.Id">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Tag:
+                                            var tag = item.Reference as Tag;
+                                            <a href="/manage/tags?Text=@Html.UrlEncoder.Encode(item.Description??string.Empty)">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Comment:
+                                            var comment = item.Reference as Comment;
+                                            <a href="/articles/@comment?.ArticleId">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Nav:
+                                            var nav = item.Reference as Nav;
+                                            <a href="/manage/navs/edit/@nav?.Id">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Link:
+                                            var link = item.Reference as Link;
+                                            <a href="/manage/links/edit/@link?.Id">@item.Description</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Advertisement:
+                                            var advertisement = item.Reference as Advertisement;
+                                            <a href="/manage/advertisements/edit/@advertisement?.Id">@item.Description</a>
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    switch (item.ReferenceType)
+                                    {
+                                        case (int)EnumOperationReferenceTypes.User:
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Category:
+                                        case (int)EnumOperationReferenceTypes.Article:
+                                        case (int)EnumOperationReferenceTypes.Tag:
+                                        case (int)EnumOperationReferenceTypes.Comment:
+                                        case (int)EnumOperationReferenceTypes.Nav:
+                                        case (int)EnumOperationReferenceTypes.Link:
+                                        case (int)EnumOperationReferenceTypes.Advertisement:
+                                        case (int)EnumOperationReferenceTypes.File:
+                                            @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription())
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.WebConfig:
+                                            @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription()) <a href="/manage/webconfigs">查看</a>
+                                            break;
+                                        case (int)EnumOperationReferenceTypes.Sitemap:
+                                            @(((EnumOperationReferenceTypes)item.ReferenceType).GetDescription()) <a href="/manage/sitemaps">查看</a>
+                                            break;
+                                    }
+                                    <span>@item.Description</span>
+                                }
+                            </td>
+                            <td>@item.CreatedAt.ToDateTimeString("yyyy-MM-dd HH:mm:ss fff")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <partial name="_Pagination" />
+        }
+        else
+        {
+            <partial name="_None" />
+        }
+    </div>
+</div>

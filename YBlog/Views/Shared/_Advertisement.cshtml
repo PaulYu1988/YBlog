@@ -1,0 +1,10 @@
+@inject ICacheService cacheService
+@model EnumAdvertisementCodes
+@{
+    var advertisements = cacheService.GetAdvertisements();
+    var curr = advertisements.FirstOrDefault(x => x.Code == Model.ToString());
+    if (curr != null)
+    {
+        @Html.Raw(curr.AdvertisementContent)
+    }
+}

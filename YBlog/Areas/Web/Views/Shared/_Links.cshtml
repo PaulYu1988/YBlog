@@ -1,0 +1,18 @@
+@inject YBlog.Services.ICacheService cacheService
+@{
+    var links = cacheService.GetLinks();
+}
+@if (links != null && links.Any())
+{
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="link-list">
+                <i class="layui-icon layui-icon-link layui-font-12 layui-font-green"> 友情链接</i>
+                @foreach (var item in links)
+                {
+                    <a class="layui-badge layui-bg-gray" href="@item.Url" target="@(((EnumTargets)item.Target).ToString())">@item.Text</a>
+                }
+            </div>
+        </div>
+    </div>
+}

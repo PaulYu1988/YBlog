@@ -1,0 +1,1 @@
+﻿dotnet ef dbcontext scaffold --output-dir Database --context-dir Database "Server=47.103.148.164;Database=YBlog;User=sa;Password=Legend11!@#;Encrypt=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -c YBlogContext --force

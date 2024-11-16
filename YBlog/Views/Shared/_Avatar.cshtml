@@ -1,0 +1,24 @@
+@inject ICacheService cacheService
+@model Avatar
+@if (string.IsNullOrWhiteSpace(Model.Url))
+{
+    if (Model.IsHeader)
+    {
+        <i class="layui-nav-img header-icon-avatar" style="background:@(cacheService.GetAvatarBackgroundColor(Model.UserId))">@cacheService.GetAbbreviation(Model.Nickname)</i>
+    }
+    else
+    {
+        <i class="icon-avatar" style="background:@(cacheService.GetAvatarBackgroundColor(Model.UserId))">@cacheService.GetAbbreviation(Model.Nickname)</i>
+    }
+}
+else
+{
+    if (Model.IsHeader)
+    {
+        <img src="@(Model.Url)" class="layui-nav-img">
+    }
+    else
+    {
+        <img class="user-avatar" src="@(Model.Url)" />
+    }
+}

@@ -1,0 +1,103 @@
+.share-bar {
+    padding-top: 12px;
+    text-align: right;
+}
+
+.share-bar .share-bar-item {
+    cursor: pointer;
+    display: inline-block;
+    width: 33px;
+    height: 33px;
+    border-radius: 4px;
+    border: 1px solid;
+    position: relative;
+    margin-left: 8px;
+    vertical-align: top;
+}
+
+.share-bar .share-bar-item svg {
+    width: 16px;
+    height: 16px;
+}
+
+.share-bar .like-item {
+    border-color: #a233c6;
+    color: #a233c6;
+    width: auto;
+}
+
+.share-bar .like-item svg {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+}
+
+.share-bar .favorite-item {
+    border-color: #ffb800;
+    color: #ffb800;
+    width: auto;
+}
+
+.share-bar .favorite-item svg {
+    position: absolute;
+    top: 7px;
+    left: 9px;
+}
+
+.share-bar .sina-weibo-item {
+    border-color: #ff5722;
+    color: #ff5722;
+}
+
+.share-bar .sina-weibo-item svg {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+}
+
+.share-bar .tencent-qq-item {
+    border-color: #1e9fff;
+    color: #1e9fff;
+}
+
+.share-bar .tencent-qq-item svg {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+}
+
+.share-bar .wechat-item {
+    border-color: #16b777;
+    color: #16b777;
+}
+
+.share-bar .wechat-item svg {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+}
+
+.share-bar .link-item {
+    border-color: #16baaa;
+    color: #16baaa;
+}
+
+.share-bar .link-item svg {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+}
+
+.share-bar .share-bar-item span {
+    margin-left: 32px;
+    margin-top: 7px;
+    margin-right: 9px;
+}
+
+.share-box {
+    text-align: center;
+}
+
+.share-box img {
+    margin: 12px auto;
+}
