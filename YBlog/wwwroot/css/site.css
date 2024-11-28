@@ -38,10 +38,12 @@ header .header-container .site-name {
     padding: 0 15px;
     flex-grow: 1;
 }
+
 header .header-container .site-name img {
     vertical-align: middle;
     max-height: 48px;
 }
+
 header .header-container .site-name span {
     vertical-align: middle;
 }
@@ -73,6 +75,10 @@ main {
 .article-list ul li .article-item {
     width: 0;
     flex-grow: 1;
+}
+
+.article-list ul li .article-item .tag-items i {
+    margin-right: 4px;
 }
 
 .article-list ul li .article-item p {
@@ -127,6 +133,10 @@ main {
     margin-top: 8px;
 }
 
+.article-tags i {
+    margin-right: 4px;
+}
+
 .article-content {
     margin-top: 12px;
 }
@@ -146,9 +156,18 @@ main {
     font-size: 16px;
     font-weight: bold;
     margin: 4px 0;
+    border-left: 4px solid #16baaa;
+    padding-left: 8px;
 }
 
-.article-content h3,
+.article-content h3 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 0;
+    border-left: 4px solid #5f5f5f;
+    padding-left: 8px;
+}
+
 .article-content h4,
 .article-content h5,
 .article-content h6,

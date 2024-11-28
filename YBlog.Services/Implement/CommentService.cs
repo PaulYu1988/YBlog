@@ -35,6 +35,23 @@ namespace YBlog.Services.Implement
                 UserId = userId
             };
             _context.Comments.Add(comment);
+            var date = DateTime.Now.Date;
+            var commentDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == (int)EnumDailyStatisticTypes.Comment && x.Date == date);
+            if (commentDailyStatistic != null)
+            {
+                commentDailyStatistic.Count++;
+                commentDailyStatistic.LastModifiedAt = DateTime.Now;
+            }
+            else
+            {
+                commentDailyStatistic = new DailyStatistic()
+                {
+                    Type = (int)EnumDailyStatisticTypes.Comment,
+                    Date = date,
+                    Count = 1
+                };
+                _context.DailyStatistics.Add(commentDailyStatistic);
+            }
             return (await _context.SaveChangesAsync()) > 0;
         }
 
