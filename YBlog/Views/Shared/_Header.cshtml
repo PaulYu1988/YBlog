@@ -13,8 +13,9 @@
             path = "/categories/" + category.Id;
         }
     }
+    var themeMode = Context.Request.GetThemeMode();
 }
-<header class="layui-bg-gray">
+<header>
     <div class="header-container">
         <div class="site-name layui-font-green layui-font-24">
             @if (!string.IsNullOrWhiteSpace(webConfig.Logo))
@@ -27,7 +28,7 @@
             }
         </div>
         <div class="header-nav layui-hide-xs">
-            <ul class="layui-nav layui-bg-gray">
+            <ul class="layui-nav">
                 @foreach (var item in parentNavs)
                 {
                     var childNavs = navs.Where(x => x.ParentId == item.Id);
@@ -84,6 +85,19 @@
                     </li>
                 }
             </ul>
+        </div>
+        <div class="mode-container">
+            <div class="layui-form ws-header-theme" lay-filter="header-theme">
+                <input type="checkbox" name="theme-mode" @Html.Raw(themeMode == EnumThemeModes.Dark?"checked":string.Empty) id="ID-header-theme-mode" lay-filter="header-theme-mode" lay-skin="switch" title=""><div class="layui-unselect layui-form-switch" lay-skin="switch">
+                    <div>
+                        <i class="layui-icon layui-icon-light"></i>
+                    </div><i></i>
+                </div>
+                <div lay-checkbox="">
+                    <i class="layui-icon layui-icon-moon"></i> |
+                    <i class="layui-icon layui-icon-light"></i>
+                </div>
+            </div>
         </div>
         <div class="nav-more">
             <i class="layui-icon layui-icon-slider layui-font-24"></i>

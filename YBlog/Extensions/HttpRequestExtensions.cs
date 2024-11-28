@@ -92,5 +92,18 @@ namespace YBlog.Extensions
                 }
             }
         }
+        public static EnumThemeModes GetThemeMode(this HttpRequest httpRequest)
+        {
+            var result = EnumThemeModes.Light;
+            var themeMode = httpRequest.Cookies[EnumCookieNames.ThemeMode.ToString()];
+            if (!string.IsNullOrWhiteSpace(themeMode))
+            {
+                if (themeMode == "dark")
+                {
+                    result = EnumThemeModes.Dark;
+                }
+            }
+            return result;
+        }
     }
 }

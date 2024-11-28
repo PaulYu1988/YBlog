@@ -24,6 +24,14 @@ body {
 
 header {
     border-bottom: 1px solid rgb(0 0 0 / 5%);
+    background-color: #fafafa !important;
+    color: #5f5f5f !important;
+}
+
+html.dark header {
+    background-color: unset !important;
+    color: unset !important;
+    border-bottom: 1px solid var(--lay-color-border-2);
 }
 
 header .header-container {
@@ -38,12 +46,37 @@ header .header-container .site-name {
     padding: 0 15px;
     flex-grow: 1;
 }
+
 header .header-container .site-name img {
     vertical-align: middle;
     max-height: 48px;
 }
+
 header .header-container .site-name span {
     vertical-align: middle;
+}
+
+header .header-container .header-nav .layui-nav {
+    background-color: #fafafa !important;
+    color: #5f5f5f !important;
+}
+
+html.dark header .header-container .header-nav .layui-nav {
+    background-color: unset !important;
+    color: unset !important;
+}
+
+header .header-container .header-nav .layui-nav .layui-nav-item a {
+    color: rgba(0, 0, 0, .8);
+}
+
+html.dark header .header-container .header-nav .layui-nav .layui-nav-item a {
+    color: unset;
+}
+
+header .header-container .mode-container {
+    margin-top: 9px;
+    margin-right: 15px;
 }
 
 header .header-container .nav-more {
@@ -73,6 +106,10 @@ main {
 .article-list ul li .article-item {
     width: 0;
     flex-grow: 1;
+}
+
+.article-list ul li .article-item .tag-items i {
+    margin-right: 4px;
 }
 
 .article-list ul li .article-item p {
@@ -127,6 +164,10 @@ main {
     margin-top: 8px;
 }
 
+.article-tags i {
+    margin-right: 4px;
+}
+
 .article-content {
     margin-top: 12px;
 }
@@ -146,9 +187,18 @@ main {
     font-size: 16px;
     font-weight: bold;
     margin: 4px 0;
+    border-left: 4px solid #16baaa;
+    padding-left: 8px;
 }
 
-.article-content h3,
+.article-content h3 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 0;
+    border-left: 4px solid #5f5f5f;
+    padding-left: 8px;
+}
+
 .article-content h4,
 .article-content h5,
 .article-content h6,
@@ -315,6 +365,10 @@ footer {
         border-bottom: none;
     }
 
+    html.dark header {
+        border-bottom: none;
+    }
+
     header .header-container {
         display: block;
         position: relative;
@@ -329,11 +383,29 @@ footer {
         border-bottom: 1px solid rgb(0 0 0 / 5%);
     }
 
+    html.dark header .header-container .site-name {
+        border-bottom: 1px solid var(--lay-color-border-2);
+    }
+
+    html.dark header .header-container .header-nav {
+        border-bottom: 1px solid var(--lay-color-border-2);
+    }
+
     header .header-container .nav-more {
         display: block;
         position: absolute;
-        right: 20px;
+        left: 15px;
         top: 18px;
+        cursor: pointer;
+    }
+
+    header .header-container .mode-container {
+        margin-top: 0;
+        margin-right: 0;
+        display: block;
+        position: absolute;
+        right: 15px;
+        top: 10px;
         cursor: pointer;
     }
 

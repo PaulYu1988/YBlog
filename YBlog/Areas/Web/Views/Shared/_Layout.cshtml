@@ -3,9 +3,10 @@
     var webConfigs = cacheService.GetWebConfigView();
     var metaKeywords = ViewData["MetaKeywords"]?.ToString();
     var metaDescription = ViewData["MetaDescription"]?.ToString();
+    var themeMode = Context.Request.GetThemeMode();
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +20,10 @@
         <meta name="description" content="@metaDescription" />
     }
     <link rel="stylesheet" href="@cacheService.GetAssetsUrl("/assets/layui/css/layui.css")" />
+    @if (themeMode == EnumThemeModes.Dark)
+    {
+        <link rel="stylesheet" id="dark-css" href="@cacheService.GetAssetsUrl("/assets/layui/css/layui-theme-dark.css")" />
+    }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     @if (!string.IsNullOrWhiteSpace(webConfigs.Analytics))
@@ -27,7 +32,7 @@
     }
     <partial name="_Advertisement" model="EnumAdvertisementCodes.HtmlHead" />
 </head>
-<body class="layui-bg-gray">
+<body>
     <partial name="_Header" />
     <partial name="_Advertisement" model="EnumAdvertisementCodes.NavBottom" />
     <main role="main">

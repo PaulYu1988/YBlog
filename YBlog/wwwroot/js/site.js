@@ -33,6 +33,21 @@
             summaryActive(navLinks, sections);
         });
     }
+
+    $('.mode-container .layui-form-switch').click(function () {
+        var checked = $(this).hasClass('layui-form-onswitch');
+        if (checked) {
+            $('html').addClass('dark');
+            $('head').append('<link id="dark-css" rel="stylesheet" href="/assets/layui/css/layui-theme-dark.css">');
+        } else {
+            $('html').removeClass('dark');
+            $('#dark-css').remove();
+        }
+        const date = new Date();
+        date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year
+        expires = "; expires=" + date.toUTCString();
+        document.cookie = 'ThemeMode' + "=" + encodeURIComponent(checked ? 'dark' : 'light') + expires + "; path=/";
+    });
 });
 function searchArticle() {
     var val = $('.input-search').val();
