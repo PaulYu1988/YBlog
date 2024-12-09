@@ -30,10 +30,13 @@ Microsoft .NET8运行时官网下载地址：[.NET8运行时下载](https://dotn
   },
   "CompatibilityLevel": 120
 }
+```
 
 如果数据库是 SQL Server 2016 (13.x) 或更高版本，或者使用的是 Azure SQL，请通过以下命令检查已配置的数据库兼容性级别：
 
+```
 SELECT name, compatibility_level FROM sys.databases;
+```
 
 如果兼容级别 >= 130，无需添加CompatibilityLevel配置。如果兼容级别低于 130 (SQL Server 2016)，请考虑将兼容级别修改为较新的值。修改方法请参考 [OpenAI](https://learn.microsoft.com/zh-cn/sql/t-sql/statements/alter-database-transact-sql-compatibility-level?view=sql-server-ver16#best-practices-for-upgrading-database-compatibility-leve)。
 
