@@ -9,7 +9,10 @@
             complete: undefined,
             autoMessage: true,
             successMessageType: 'alert',
-            errorMessageType: 'alert'
+            errorMessageType: 'alert',
+            captchaId: 'Captcha',
+            captchaName: 'Captcha',
+            hasCaptcha: false
         }, options);
 
         var showAutoMessage = (isSuccess, response) => {
@@ -66,6 +69,33 @@
                 }
                 form.on('submit', function (data) {
                     var formData = new FormData(data.form);
+                    if (settings.hasCaptcha) {
+                        if (!formData.has(settings.captchaName)) {
+                            var submitBtn = $(data.form).find('button[type="submit"]');
+                            var captchaWrapper = document.createElement('div');
+                            captchaWrapper.className = 'captcha-wrapper';
+                            var captchaImg = document.createElement('img');
+                            captchaImg.className = 'captcha-img';
+                            captchaImg.setAttribute('src', '/common/captcha?rnd=' + Math.random());
+                            captchaImg.onclick = (event) => {
+                                $('.captcha-img').attr('src', '/common/captcha?rnd=' + Math.random());
+                                $('input[name="' + settings.captchaName + '"]').val('');
+                            };
+                            var captchaInput = document.createElement('input');
+                            captchaInput.type = 'text';
+                            captchaInput.name = settings.captchaName;
+                            captchaInput.id = settings.captchaId;
+                            captchaInput.className = 'layui-input captcha-input';
+                            captchaInput.setAttribute('lay-verify', 'required');
+                            captchaInput.setAttribute('placeholder', '验证码');
+                            captchaInput.setAttribute('lay-reqtext', '请填写验证码');
+                            captchaInput.setAttribute('autocomplete', 'off');
+                            captchaWrapper.append(captchaImg);
+                            captchaWrapper.append(captchaInput);
+                            submitBtn.before(captchaWrapper);
+                            return false;
+                        }
+                    }
                     var action = data.form.getAttribute('action');
                     var type = data.form.getAttribute('method') ?? 'post';
                     $.ajax({

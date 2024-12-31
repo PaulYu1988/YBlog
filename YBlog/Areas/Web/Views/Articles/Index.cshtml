@@ -26,9 +26,10 @@
                 document.location.reload();
             },
             error: function (response) {
-                $('.captcha-img').attr('src', '/common/captcha?t=' + new Date().getTime());
+                $('.captcha-img').attr('src', '/common/captcha?rnd=' + Math.random());
                 $('input[name="Captcha"]').val('');
-            }
+            },
+            hasCaptcha: true
         });
         $.ajax({
             type: 'GET',
@@ -120,9 +121,7 @@
                         <textarea name="CommentContent" placeholder="请输入内容" lay-verify="CommentContent" autocomplete="off" class="layui-textarea"></textarea>
                     </div>
                     <div class="layui-form-item">
-                        <div class="comment-captcha-container">
-                            <img class="captcha-img" src="/common/captcha" onclick="this.src='/common/captcha?t='+ new Date().getTime();">
-                            <input type="text" name="Captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input captcha-input" />
+                        <div class="captcha-container">
                             <button type="submit" class="layui-btn" lay-submit>提交</button>
                         </div>
                     </div>

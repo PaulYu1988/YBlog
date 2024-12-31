@@ -149,17 +149,6 @@ main {
     font-size: 12px;
 }
 
-.comment-captcha-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.comment-captcha-container .captcha-input {
-    width: 120px;
-    margin-right: 12px;
-}
-
 .article-tags {
     margin-top: 8px;
 }
@@ -451,4 +440,26 @@ footer {
 .layui-logo-container img {
     max-height: 30px;
     margin-right: 8px;
+}
+
+.captcha-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.captcha-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.captcha-wrapper .captcha-img {
+    height: 34px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.captcha-wrapper .captcha-input {
+    width: 120px;
+    margin-right: 12px;
 }
