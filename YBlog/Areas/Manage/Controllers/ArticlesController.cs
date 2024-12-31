@@ -7,6 +7,7 @@ using YBlog.Models.Enums;
 using YBlog.Models.Queries;
 using YBlog.Models.Requests;
 using YBlog.Services;
+using Ganss.Xss;
 
 namespace YBlog.Areas.Manage.Controllers
 {
@@ -69,6 +70,7 @@ namespace YBlog.Areas.Manage.Controllers
             if (!ModelState.IsValid)
                 return this.BadRequest();
             var userState = Request.GetUserState();
+            request.ArticleContent = new HtmlSanitizer().Sanitize(request.ArticleContent ?? string.Empty);
             await GenerateThumbnailAsync(request);
             var success = false;
             if (request.Id.HasValue)

@@ -92,6 +92,9 @@ main {
 
 .article-list ul li {
     padding: 16px 0;
+}
+
+.article-list ul li .article-item {
     display: flex;
     align-items: start;
 }
@@ -103,16 +106,16 @@ main {
     margin-right: 24px;
 }
 
-.article-list ul li .article-item {
+.article-list ul li .article-description {
     width: 0;
     flex-grow: 1;
 }
 
-.article-list ul li .article-item .tag-items i {
+.article-list ul li .article-description .tag-items i {
     margin-right: 4px;
 }
 
-.article-list ul li .article-item p {
+.article-list ul li .article-description p {
     font-size: 12px;
 }
 
@@ -147,17 +150,6 @@ main {
 
 .comment-list ul li div p span {
     font-size: 12px;
-}
-
-.comment-captcha-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.comment-captcha-container .captcha-input {
-    width: 120px;
-    margin-right: 12px;
 }
 
 .article-tags {
@@ -451,4 +443,26 @@ footer {
 .layui-logo-container img {
     max-height: 30px;
     margin-right: 8px;
+}
+
+.captcha-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.captcha-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.captcha-wrapper .captcha-img {
+    height: 34px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.captcha-wrapper .captcha-input {
+    width: 120px;
+    margin-right: 12px;
 }

@@ -27,7 +27,7 @@
                     var item = settings.selected[i];
                     var selectedItem = document.createElement('span');
                     selectedItem.className = 'layui-badge layui-bg-green';
-                    selectedItem.textContent = item;
+                    selectedItem.innerHTML = item;
                     selectedItem.onclick = (event) => {
                         event.currentTarget.remove();
                         settings.selected = settings.selected.filter(x => x != $(event.currentTarget).text());
@@ -98,7 +98,7 @@
                         $('input[name="' + settings.name + '"]').val(settings.selected.join(','));
                         var addSpan = document.createElement('span');
                         addSpan.className = 'layui-badge layui-bg-green';
-                        addSpan.textContent = tag;
+                        addSpan.innerHTML = tag;
                         var addSpanButton = document.createElement('i');
                         addSpanButton.className = 'layui-icon layui-icon-close layui-font-12';
                         addSpan.append(addSpanButton);
@@ -124,7 +124,7 @@
                     var item = settings.tags[i];
                     var matchItem = document.createElement('span');
                     matchItem.className = 'layui-badge layui-bg-blue';
-                    matchItem.textContent = item;
+                    matchItem.innerHTML = item;
                     matchItem.onclick = (event) => {
                         var tag = $(event.currentTarget).text();
                         var index = settings.selected.indexOf(tag);
@@ -133,7 +133,7 @@
                             $('input[name="' + settings.name + '"]').val(settings.selected.join(','));
                             var addSpan = document.createElement('span');
                             addSpan.className = 'layui-badge layui-bg-green';
-                            addSpan.textContent = tag;
+                            addSpan.innerHTML = tag;
                             var addSpanButton = document.createElement('i');
                             addSpanButton.className = 'layui-icon layui-icon-close layui-font-12';
                             addSpan.append(addSpanButton);

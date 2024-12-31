@@ -12,18 +12,20 @@
                     @foreach (var item in articles)
                     {
                         <li>
-                            @if (!string.IsNullOrWhiteSpace(item.Thumbnail))
-                            {
-                                <img src="@item.Thumbnail" />
-                            }
                             <div class="article-item">
-                                <a href="/articles/@item.Id" class="layui-font-16">@item.Title</a>
-                                <div class="tag-items">
-                                    <i class="layui-icon layui-icon-date layui-font-12"> @item.CreatedAt.ToViewString()</i>
-                                    <i class="layui-icon layui-icon-eye layui-font-12"> @item.ReadCount</i>
-                                    <i class="layui-icon layui-icon-dialogue layui-font-12"> @item.CommentCount</i>
+                                @if (!string.IsNullOrWhiteSpace(item.Thumbnail))
+                                {
+                                    <img src="@item.Thumbnail" />
+                                }
+                                <div class="article-description">
+                                    <a href="/articles/@item.Id" class="layui-font-16">@item.Title</a>
+                                    <div class="tag-items">
+                                        <i class="layui-icon layui-icon-date layui-font-12"> @item.CreatedAt.ToViewString()</i>
+                                        <i class="layui-icon layui-icon-eye layui-font-12"> @item.ReadCount</i>
+                                        <i class="layui-icon layui-icon-dialogue layui-font-12"> @item.CommentCount</i>
+                                    </div>
+                                    <p>@item.Description</p>
                                 </div>
-                                <p>@item.Description</p>
                             </div>
                         </li>
                     }

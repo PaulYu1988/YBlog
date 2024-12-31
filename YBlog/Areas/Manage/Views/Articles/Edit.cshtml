@@ -1,3 +1,4 @@
+@inject YBlog.Services.ICacheService cacheService
 @{
     var categories = ViewBag.Categories as List<Category>;
     var tags = ViewBag.Tags as List<Tag>;
@@ -5,15 +6,19 @@
     {
         tags = new List<Tag>();
     }
-    var selected = new string[0];
+    var selected = new List<string>();
     if (!string.IsNullOrWhiteSpace(Model?.Tags))
     {
-        selected = Model.Tags.Split(',');
+        var temp = Model.Tags.Split(',');
+        foreach (var tag in temp)
+        {
+            selected.Add(Html.Encode(tag));
+        }
     }
 }
 @model ArticleRequest
 @section Scripts {
-    <script src="https://cdn.leavescn.com/assets/tinymce/tinymce.min.js"></script>
+    <script src="@cacheService.GetAssetsUrl("/assets/tinymce/tinymce.min.js")"></script>
     <script src="~/js/jquery.tinymce.js"></script>
     <script src="~/js/jquery.tags.js"></script>
     <script src="~/js/jquery.upload.js"></script>
@@ -50,7 +55,7 @@
             name: 'Tags',
             addButtonText: '添加',
             selected: [@Html.Raw(selected.Any() ? $"'{string.Join("','", selected)}'" : "")],
-            tags: [@Html.Raw(tags.Any() ? $"'{string.Join("','", tags.Select(x => x.Text))}'" : "")],
+            tags: [@Html.Raw(tags.Any() ? $"'{string.Join("','", tags.Select(x => Html.Encode(x.Text)))}'" : "")],
             labelText: '标签'
         });
         $('#ArticleContent').initTinymce({
