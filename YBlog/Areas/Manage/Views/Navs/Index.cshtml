@@ -31,7 +31,7 @@
         </form>
         @if (parents != null && parents.Any())
         {
-            <table class="layui-table" lay-even>
+            <table class="layui-table">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -48,8 +48,10 @@
                     {
                         var children = Model?.Where(x => x.ParentId == item.Id).ToList();
                         <tr>
-                            <td><i class="layui-icon layui-icon-flag"></i></td>
-                            <td>@item.Text</td>
+                            <td>@item.Id</td>
+                            <td>
+                                <strong>@item.Text</strong>
+                            </td>
                             <td>@(((EnumTargets)item.Target).GetDescription())</td>
                             <td>
 
@@ -86,10 +88,12 @@
                         {
                             @foreach (var child in children)
                             {
-
                                 <tr>
-                                    <td></td>
-                                    <td>@child.Text</td>
+                                    <td>@item.Id</td>
+                                    <td>
+                                        <i class="layui-icon layui-icon-right"></i>
+                                        @child.Text
+                                    </td>
                                     <td>@(((EnumTargets)child.Target).GetDescription())</td>
                                     <td>@child.Url</td>
                                     <td>
