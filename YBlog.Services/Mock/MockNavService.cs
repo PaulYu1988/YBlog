@@ -1,6 +1,5 @@
 using YBlog.Models.Database;
 using YBlog.Models.Requests;
-using YBlog.Models.Enums;
 
 namespace YBlog.Services.Mock
 {
@@ -29,23 +28,65 @@ namespace YBlog.Services.Mock
         private List<Nav> GetMockList(int take)
         {
             var items = new List<Nav>();
-            for (var i = 0; i < take; i++)
+            items.Add(new Nav()
             {
-                var item = new Nav()
-                {
-                    Id = i + 1,
-                    ParentId = i % 2 == 0 ? 2 : null,
-                    CreatedAt = DateTime.Now.AddDays(0 - i),
-                    LastModifiedAt = DateTime.Now.AddDays(0 - i),
-                    IsEnabled = true,
-                    Sort = 50 + i,
-                    Target = (int)EnumTargets._blank,
-                    Text = "Text" + i,
-                    Url = "https://google.com"
-                };
-                items.Add(item);
-            }
-            return items.OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToList();
+                Id = 1,
+                Text = "Index",
+                Url = "/",
+                Target = 1,
+                IsEnabled = true
+            });
+            items.Add(new Nav()
+            {
+                Id = 2,
+                Text = ".NET",
+                Url = "",
+                Target = 1,
+                IsEnabled = true
+            });
+            items.Add(new Nav()
+            {
+                Id = 3,
+                Text = "Angular",
+                Url = "/categories/2",
+                Target = 1,
+                IsEnabled = true
+            });
+            items.Add(new Nav()
+            {
+                Id = 4,
+                Text = "React",
+                Url = "/categories/3",
+                Target = 1,
+                IsEnabled = true
+            });
+            items.Add(new Nav()
+            {
+                Id = 5,
+                Text = "Next.js",
+                Url = "/categories/4",
+                Target = 1,
+                ParentId = 2,
+                IsEnabled = true
+            });
+            items.Add(new Nav()
+            {
+                Id = 6,
+                Text = "Share",
+                Url = "/categories/5",
+                Target = 1,
+                ParentId = 2
+            });
+            items.Add(new Nav()
+            {
+                Id = 7,
+                Text = "Angular.js",
+                Url = "/categories/5",
+                Target = 1,
+                ParentId = 3,
+                IsEnabled = true
+            });
+            return items;
         }
 
         public Task<bool> DeleteByIdAsync(int id)
