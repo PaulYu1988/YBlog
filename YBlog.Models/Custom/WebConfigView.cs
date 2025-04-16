@@ -13,5 +13,6 @@ namespace YBlog.Models.Custom
         public string? MetaKeywords { get; set; }
         public string? MetaDescription { get; set; }
         public string? AssetsCDN { get; set; }
+        public string? AdIPWhitelist { get; set; }
     }
 }
