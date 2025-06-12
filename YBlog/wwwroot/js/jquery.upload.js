@@ -79,6 +79,19 @@
                         return;
                     }
                 }
+                if (!file) {
+                    if (settings.defaultUrl) {
+                        previewImg.src = settings.defaultUrl;
+                    } else {
+                        if (!$(preview).hasClass('layui-hide')) {
+                            $(preview).addClass('layui-hide');
+                        }
+                        if (!$(deleteButton).hasClass('layui-hide')) {
+                            $(deleteButton).addClass('layui-hide');
+                        }
+                    }
+                    return;
+                }
                 if (file.type.startsWith('image')) {
                     if (window.URL && typeof window.URL.createObjectURL === 'function') {
                         if ($(preview).hasClass('layui-hide')) {

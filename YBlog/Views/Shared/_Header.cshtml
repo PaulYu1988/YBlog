@@ -88,11 +88,7 @@
         </div>
         <div class="mode-container">
             <div class="layui-form ws-header-theme" lay-filter="header-theme">
-                <input type="checkbox" name="theme-mode" @Html.Raw(themeMode == EnumThemeModes.Dark?"checked":string.Empty) id="ID-header-theme-mode" lay-filter="header-theme-mode" lay-skin="switch" title=""><div class="layui-unselect layui-form-switch" lay-skin="switch">
-                    <div>
-                        <i class="layui-icon layui-icon-light"></i>
-                    </div><i></i>
-                </div>
+                <input type="checkbox" name="theme-mode" @Html.Raw(themeMode == EnumThemeModes.Dark ? "checked" : string.Empty) lay-filter="header-theme-mode" lay-skin="switch" title="" />
                 <div lay-checkbox="">
                     <i class="layui-icon layui-icon-moon"></i> |
                     <i class="layui-icon layui-icon-light"></i>
