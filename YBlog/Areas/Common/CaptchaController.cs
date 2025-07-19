@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SkiaSharp;
 using System.Text;
 using YBlog.Models.Enums;
+using ImageMagick;
+using ImageMagick.Drawing;
 
 namespace YBlog.Areas.Common
 {
@@ -20,30 +21,20 @@ namespace YBlog.Areas.Common
             }
             var captcha = myStr.ToString();
             Request.HttpContext.Session.SetString(EnumSessionNames.Captcha.ToString(), captcha);
-            using (var bitmap = new SKBitmap(120, 40))
+            using (var image = new MagickImage(MagickColors.White, 120, 40))
             {
-                // 创建SKCanvas对象
-                using (var canvas = new SKCanvas(bitmap))
+                var draw = new Drawables()
+                .Font("Arial")
+                .FontPointSize(26)
+                .FillColor(MagickColors.Black)
+                .TextAlignment(TextAlignment.Left)
+                .Text(14, 29, captcha);
+                image.Draw(draw);
+                image.Format = MagickFormat.Jpeg;
+                using (var stream = new MemoryStream())
                 {
-                    // 设置背景颜色
-                    canvas.Clear(SKColors.White);
-                    // 设置字体
-                    using (var paint = new SKPaint())
-                    {
-                        paint.Color = SKColors.Black;
-                        paint.IsAntialias = true;
-                        paint.TextSize = 26;
-                        // 将验证码绘制到画布上
-                        canvas.DrawText(captcha, 14, 29, paint);
-                    }
-                    // 保存验证码图片
-                    using (var image = SKImage.FromBitmap(bitmap))
-                    using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                    using (var stream = new MemoryStream())
-                    {
-                        data.SaveTo(stream);
-                        return File(stream.ToArray(), "image/jpeg");
-                    }
+                    image.Write(stream);
+                    return File(stream.ToArray(), "image/jpeg");
                 }
             }
         }

@@ -84,10 +84,10 @@ header .header-container .nav-more {
 }
 
 main {
-    width: 100%;
     max-width: 1200px;
     flex-grow: 1;
     margin: 16px auto;
+    padding: 0 8px;
 }
 
 .article-list ul li {

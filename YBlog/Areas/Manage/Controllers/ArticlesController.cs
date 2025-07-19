@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SkiaSharp;
 using System.Text.RegularExpressions;
 using YBlog.Attributes;
 using YBlog.Extensions;
@@ -8,6 +7,7 @@ using YBlog.Models.Queries;
 using YBlog.Models.Requests;
 using YBlog.Services;
 using Ganss.Xss;
+using ImageMagick;
 
 namespace YBlog.Areas.Manage.Controllers
 {
@@ -133,10 +133,10 @@ namespace YBlog.Areas.Manage.Controllers
             }
             if (!string.IsNullOrWhiteSpace(request.Thumbnail))
                 return;
-            int targetWidth = 240;
-            int targetHeight = 160;
-            int newWidth = 0;
-            int newHeight = 0;
+            uint targetWidth = 240;
+            uint targetHeight = 160;
+            uint newWidth = 0;
+            uint newHeight = 0;
             Regex reg = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
             MatchCollection ms = reg.Matches(request.ArticleContent ?? string.Empty);
             if (ms.Count <= 0)
@@ -153,14 +153,13 @@ namespace YBlog.Areas.Manage.Controllers
                     }
                     using (var response = await wc.GetAsync(imageUrl))
                     using (var stream = await response.Content.ReadAsStreamAsync())
-                    using (var fileStream = new SKManagedStream(stream))
-                    using (var bitmap = SKBitmap.Decode(fileStream))
+                    using (var image = new MagickImage(stream))
                     {
                         bool needCreate = false;
-                        if (bitmap.Width >= targetWidth)
+                        if (image.Width >= targetWidth)
                         {
                             newWidth = targetWidth;
-                            newHeight = (targetWidth * bitmap.Height) / bitmap.Width;
+                            newHeight = (targetWidth * image.Height) / image.Width;
                             if (newHeight >= targetHeight)
                             {
                                 needCreate = true;
@@ -168,10 +167,10 @@ namespace YBlog.Areas.Manage.Controllers
                         }
                         if (!needCreate)
                         {
-                            if (bitmap.Height >= targetHeight)
+                            if (image.Height >= targetHeight)
                             {
                                 newHeight = targetHeight;
-                                newWidth = (targetHeight * bitmap.Width) / bitmap.Height;
+                                newWidth = (targetHeight * image.Width) / image.Height;
                                 if (newWidth >= targetWidth)
                                 {
                                     needCreate = true;
@@ -181,20 +180,14 @@ namespace YBlog.Areas.Manage.Controllers
 
                         if (needCreate)
                         {
-                            //开始操作
-                            using (var resized = bitmap.Resize(new SKImageInfo(newWidth, newHeight), SKFilterQuality.Medium))
-                            using (var newImage = SKImage.FromBitmap(resized))
-                            using (var surface = SKSurface.Create(new SKImageInfo(targetWidth, targetHeight)))
+                            image.Resize(newWidth, newHeight);
+                            using (var canvas = new MagickImage(MagickColors.Transparent, targetWidth, targetHeight))
                             {
-                                var canvas = surface.Canvas;
-                                if (newWidth == targetWidth)
-                                {
-                                    canvas.DrawImage(newImage, new SKPoint(0, (targetHeight - newHeight) / 2));
-                                }
-                                else
-                                {
-                                    canvas.DrawImage(newImage, new SKPoint((targetWidth - newWidth) / 2, 0));
-                                }
+                                var offsetX = ((int)targetWidth - (int)newWidth) / 2;
+                                var offsetY = ((int)targetHeight - (int)newHeight) / 2;
+                                canvas.Composite(image, offsetX, offsetY, CompositeOperator.Over);
+                                canvas.Format = MagickFormat.Jpeg;
+                                canvas.Quality = 80;
                                 string guid = Guid.NewGuid().ToString().Replace("-", string.Empty);
                                 string extension = ".jpg";
                                 string date = DateTime.Now.ToString("yyyyMMdd");
@@ -203,13 +196,7 @@ namespace YBlog.Areas.Manage.Controllers
                                 {
                                     Directory.CreateDirectory(path);
                                 }
-                                using (var finalImage = surface.Snapshot())
-                                {
-                                    using (var writeStream = System.IO.File.OpenWrite(path + guid + extension))
-                                    {
-                                        finalImage.Encode(SKEncodedImageFormat.Jpeg, 80).SaveTo(writeStream);
-                                    }
-                                }
+                                canvas.Write(path + guid + extension);
                                 request.Thumbnail = "/upload/" + date + "/" + guid + extension;
                             }
                             break;
