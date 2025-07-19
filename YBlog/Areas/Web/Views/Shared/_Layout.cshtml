@@ -36,7 +36,9 @@
     <partial name="_Header" />
     <partial name="_Advertisement" model="EnumAdvertisementCodes.NavBottom" />
     <main role="main">
-        @RenderBody()
+        <div class="layui-padding-2">
+            @RenderBody()
+        </div>
     </main>
     <footer class="layui-bg-black">
         @if (!string.IsNullOrWhiteSpace(webConfigs.Copyright))
