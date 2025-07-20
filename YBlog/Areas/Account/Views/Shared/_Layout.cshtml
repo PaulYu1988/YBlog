@@ -6,7 +6,7 @@
     var themeMode = Context.Request.GetThemeMode();
 }
 <!DOCTYPE html>
-<html lang="en" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
+<html lang="zh" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,9 +33,11 @@
 </head>
 <body>
     <partial name="_Header" />
-    <main role="main">
-        @RenderBody()
-    </main>
+    <div class="main-container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
     <footer class="layui-bg-black">
         @if (!string.IsNullOrWhiteSpace(webConfigs.Copyright))
         {

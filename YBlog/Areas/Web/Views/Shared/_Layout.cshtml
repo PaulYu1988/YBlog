@@ -6,7 +6,7 @@
     var themeMode = Context.Request.GetThemeMode();
 }
 <!DOCTYPE html>
-<html lang="en" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
+<html lang="zh" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,11 +35,11 @@
 <body>
     <partial name="_Header" />
     <partial name="_Advertisement" model="EnumAdvertisementCodes.NavBottom" />
-    <main role="main">
-        <div class="layui-padding-2">
+    <div class="main-container">
+        <main role="main">
             @RenderBody()
-        </div>
-    </main>
+        </main>
+    </div>
     <footer class="layui-bg-black">
         @if (!string.IsNullOrWhiteSpace(webConfigs.Copyright))
         {

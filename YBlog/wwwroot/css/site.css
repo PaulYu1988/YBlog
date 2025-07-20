@@ -83,11 +83,16 @@ header .header-container .nav-more {
     display: none;
 }
 
-main {
+.main-container {
     width: 100%;
     max-width: 1200px;
     flex-grow: 1;
-    margin: 8px auto;
+    margin: 0 auto;
+    
+}
+
+main {
+    padding: 12px;
 }
 
 .article-list ul li {
