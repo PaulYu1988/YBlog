@@ -70,7 +70,10 @@ namespace YBlog.Areas.Manage.Controllers
             if (!ModelState.IsValid)
                 return this.BadRequest();
             var userState = Request.GetUserState();
-            request.ArticleContent = new HtmlSanitizer().Sanitize(request.ArticleContent ?? string.Empty);
+            var htmlSanitizer = new HtmlSanitizer();
+            htmlSanitizer.AllowedTags.Add("pre");
+            htmlSanitizer.AllowedAttributes.Add("class");
+            request.ArticleContent = htmlSanitizer.Sanitize(request.ArticleContent ?? string.Empty);
             await GenerateThumbnailAsync(request);
             var success = false;
             if (request.Id.HasValue)
