@@ -11,7 +11,7 @@ namespace YBlog.Areas.Account.Controllers
     public class CommentsController : Controller
     {
         protected ICommentService _commentService;
-        public CommentsController(ICommentService commentService, IOperationService operationService)
+        public CommentsController(ICommentService commentService)
         {
             _commentService = commentService;
         }

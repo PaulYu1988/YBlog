@@ -84,7 +84,7 @@ app.MapAreaControllerRoute(name: "Web_Search", areaName: "Web", pattern: "search
 app.MapAreaControllerRoute(name: "Web_Tags", areaName: "Web", pattern: "tags/{id?}", new { controller = "Tags", action = "Index" });
 app.MapAreaControllerRoute(name: "Manage", areaName: "Manage", pattern: "{area}/{controller}/{action}/{id?}", new { area = "Manage", controller = "Home", action = "Index" });
 app.MapAreaControllerRoute(name: "Common", areaName: "Common", pattern: "{area}/{controller}/{action}/{id?}", new { area = "Common", controller = "Home", action = "Index" });
-app.MapAreaControllerRoute(name: "Account", areaName: "Account", pattern: "{area}/{controller}/{action}/{id?}", new { area = "Common", controller = "Home", action = "Index" });
+app.MapAreaControllerRoute(name: "Account", areaName: "Account", pattern: "{area}/{controller}/{action}/{id?}", new { area = "Account", controller = "Home", action = "Index" });
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
