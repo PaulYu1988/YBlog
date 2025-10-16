@@ -188,14 +188,7 @@ main {
     padding-left: 8px;
 }
 
-.article-content h3 {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 4px 0;
-    border-left: 4px solid #5f5f5f;
-    padding-left: 8px;
-}
-
+.article-content h3,
 .article-content h4,
 .article-content h5,
 .article-content h6,
