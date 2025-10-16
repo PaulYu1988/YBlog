@@ -48,6 +48,7 @@
                     <tr>
                         <th>#</th>
                         <th>内容</th>
+                        <th>用户</th>
                         <th>发布时间</th>
                         <th>操作</th>
                     </tr>
@@ -58,6 +59,7 @@
                         <tr>
                             <td>@item.Id</td>
                             <td>@item.CommentContent</td>
+                            <td>@item.Nickname</td>
                             <td>@item.CreatedAt.ToDateTimeString()</td>
                             <td>
                                 <a href="/articles/@item.ArticleId" target="_blank" class="layui-btn layui-bg-blue layui-btn-xs">查看</a>

@@ -169,7 +169,7 @@
                     });
                     input.click();
                 },
-                content_style: 'body { font-family: "Microsoft YaHei"; font-size: 14px; } h2 { font-size: 16px; border-left: 4px solid #16baaa; padding-left: 8px; } h3 { font-size: 16px; border-left: 4px solid #5f5f5f; padding-left: 8px; } img { max-width: 90%; } pre { max-width: 90% }',
+                content_style: 'body { font-family: "Microsoft YaHei"; font-size: 14px; } h2 { font-size: 16px; border-left: 4px solid #16baaa; padding-left: 8px; } img { max-width: 85%; } pre { max-width: 85% }',
                 init_instance_callback: function (editor) {
                     editor.on("Change", function (e) {
                         tinyMCE.triggerSave();

@@ -40,7 +40,7 @@ namespace YBlog.Areas.Web.Controllers
             }
             await _articleService.ReadAsync(item);
             ViewBag.Category = await _categoryService.GetByIdAsync(item.CategoryId);
-            GenerateSummary(item);
+            HandleArticleContent(item);
             ViewBag.RelatedArticles = await _articleService.GetRelatedAsync(item.Id);
             ViewBag.Comments = await _commentService.GetAsync(new CommentPagedQuery()
             {
@@ -79,10 +79,11 @@ namespace YBlog.Areas.Web.Controllers
             var result = await _commentService.CreateAsync(request, userState.Id);
             return result ? this.Success() : this.InternalServerError();
         }
-        private void GenerateSummary(Article item)
+        private void HandleArticleContent(Article item)
         {
             var document = new HtmlDocument();
             document.LoadHtml(item.ArticleContent);
+            // Get summary.
             var nodes = document.DocumentNode.SelectNodes("//h2|//h3");
             var summary = new List<SummaryItem>();
             if (nodes != null && nodes.Count > 0)
@@ -132,6 +133,19 @@ namespace YBlog.Areas.Web.Controllers
                 item.ArticleContent = document.DocumentNode.InnerHtml;
             }
             ViewBag.Summary = summary;
+
+            // Set table class.
+            var tableNodes = document.DocumentNode.SelectNodes("//table");
+            if (tableNodes != null && tableNodes.Count > 0)
+            {
+                for (int i = 0; i < tableNodes.Count; i++)
+                {
+                    var tableNode = tableNodes[i];
+                    tableNode.AddClass("layui-table");
+                    tableNode.SetAttributeValue("lay-even", string.Empty);
+                }
+                item.ArticleContent = document.DocumentNode.InnerHtml;
+            }
         }
         [HttpGet]
         public async Task<IActionResult> UserInteractionsAsync(int id)
