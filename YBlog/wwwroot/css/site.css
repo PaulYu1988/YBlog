@@ -179,6 +179,16 @@ main {
     margin: 8px auto;
 }
 
+.article-content p a {
+    color: #01aaed;
+    text-decoration: underline;
+}
+
+.article-content p a:hover {
+    opacity: .8;
+    filter: alpha(opacity=80);
+}
+
 .article-content h2 {
     font-size: 16px;
     font-weight: bold;
