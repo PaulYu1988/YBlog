@@ -36,7 +36,7 @@ namespace YBlog.Areas.Web.Controllers
             var item = await _articleService.GetByIdAsync(id.Value);
             if (item == null || item.Status != (int)EnumArticleStatuses.Publish)
             {
-                return Redirect("/");
+                return View("~/Areas/Web/Views/Home/404.cshtml");
             }
             await _articleService.ReadAsync(item);
             ViewBag.Category = await _categoryService.GetByIdAsync(item.CategoryId);
