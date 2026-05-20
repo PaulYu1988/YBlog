@@ -1,5 +1,6 @@
 @{
     var query = ViewBag.Query as UserPagedQuery;
+    var userCredentials = ViewBag.UserCredentials as List<UserCredential>;
 }
 @model List<User>
 <div class="layui-card">
@@ -57,6 +58,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>账号</th>
                         <th>昵称</th>
                         <th>最后登录时间</th>
                         <th>操作</th>
@@ -65,8 +67,12 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
+                        var userCredential = userCredentials?.FirstOrDefault(x => x.UserId == item.Id);
                         <tr>
                             <td>@item.Id</td>
+                            <td>
+                                @userCredential?.Username
+                            </td>
                             <td>@item.Nickname</td>
                             <td>@item.LastLoginedAt.ToDateTimeString()</td>
                             <td>

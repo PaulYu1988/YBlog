@@ -15,6 +15,10 @@ namespace YBlog.Models.Enums
         [Description("昵称已存在")]
         NicknameExist = 5,
         [Description("用户被禁用")]
-        UserIsDisabled = 6
+        UserIsDisabled = 6,
+        [Description("今日评论已达上限")]
+        DailyCommentLimit = 7,
+        [Description("评论内容包含敏感词")]
+        KeywordBlacklist = 8
     }
 }

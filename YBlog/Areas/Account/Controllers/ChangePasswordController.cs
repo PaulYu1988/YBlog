@@ -26,7 +26,7 @@ namespace YBlog.Areas.Account.Controllers
             if (!ModelState.IsValid)
                 return this.BadRequest();
             var userState = Request.GetUserState();
-            var userCredential = await _userService.GetUserCredentialById(userState.Id);
+            var userCredential = await _userService.GetUserCredentialByUserId(userState.Id);
             if (userCredential?.Password != request.Password.ToMD5())
                 return this.Error(EnumErrorCodes.IncorrectPassword);
             var result = await _userService.ChangePasswordAsync(userState.Id, request.NewPassword.ToMD5());

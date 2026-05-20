@@ -12,10 +12,10 @@ namespace YBlog.Services
         Task<bool> RegisterAsync(User user, UserCredential userCredential);
         Task<bool> UpdateAsync(UserRequest request);
         Task<User?> GetByIdAsync(int id);
-        Task<UserCredential?> GetUserCredentialById(int id);
-        Task<List<User>> GetActiveUsersAsync(int take);
+        Task<UserCredential?> GetUserCredentialByUserId(int id);
         Task<List<User>> GetAsync(UserPagedQuery query);
         Task<bool> ChangePasswordAsync(int id, string password);
         Task<User?> UpdateLastLoginedAtAsync(int id);
+        Task<List<UserCredential>> GetUserCredentialsByUserIds(int[] ids);
     }
 }

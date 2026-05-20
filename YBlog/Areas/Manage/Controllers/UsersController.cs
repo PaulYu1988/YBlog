@@ -25,6 +25,7 @@ namespace YBlog.Areas.Manage.Controllers
         {
             var items = await _userService.GetAsync(query);
             ViewBag.Query = query;
+            ViewBag.UserCredentials = await _userService.GetUserCredentialsByUserIds(items.Select(x => x.Id).ToArray());
             return View(items);
         }
         [HttpGet]

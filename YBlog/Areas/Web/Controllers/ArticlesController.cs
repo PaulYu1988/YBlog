@@ -18,13 +18,15 @@ namespace YBlog.Areas.Web.Controllers
         protected ICommentService _commentService;
         protected ITagService _tagService;
         protected IUserInteractionService _userInteractionService;
-        public ArticlesController(IArticleService articleService, ICategoryService categoryService, ICommentService commentService, ITagService tagService, IUserInteractionService userInteractionService)
+        protected ICacheService _cacheService;
+        public ArticlesController(IArticleService articleService, ICategoryService categoryService, ICommentService commentService, ITagService tagService, IUserInteractionService userInteractionService, ICacheService cacheService)
         {
             _articleService = articleService;
             _categoryService = categoryService;
             _commentService = commentService;
             _tagService = tagService;
             _userInteractionService = userInteractionService;
+            _cacheService = cacheService;
         }
         [HttpGet]
         public async Task<IActionResult> IndexAsync(int? id)
@@ -75,6 +77,32 @@ namespace YBlog.Areas.Web.Controllers
             if (!string.Equals(captcha, request.Captcha, StringComparison.OrdinalIgnoreCase))
             {
                 return this.Error(EnumErrorCodes.CaptchaError);
+            }
+            if (userState.Type == EnumUserTypes.Common)
+            {
+                var configView = _cacheService.GetWebConfigView();
+                if (!string.IsNullOrWhiteSpace(configView.DailyCommentLimit))
+                {
+                    if (int.TryParse(configView.DailyCommentLimit, out int dailyCommentLimit))
+                    {
+                        var todayCommentCount = await _commentService.UserTodayCommentCountAsync(userState.Id);
+                        if (todayCommentCount >= dailyCommentLimit)
+                        {
+                            return this.Error(EnumErrorCodes.DailyCommentLimit);
+                        }
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(configView.KeywordBlacklist))
+                {
+                    var blackList = configView.KeywordBlacklist.ToLower().Split(',');
+                    foreach (var keyword in blackList)
+                    {
+                        if ((request.CommentContent ?? string.Empty).ToLower().Contains(keyword))
+                        {
+                            return this.Error(EnumErrorCodes.KeywordBlacklist);
+                        }
+                    }
+                }
             }
             var result = await _commentService.CreateAsync(request, userState.Id);
             return result ? this.Success() : this.InternalServerError();

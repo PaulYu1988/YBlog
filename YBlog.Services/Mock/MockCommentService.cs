@@ -29,6 +29,12 @@ namespace YBlog.Services.Mock
             var item = items.FirstOrDefault(x => x.Id == id);
             return Task.FromResult(item);
         }
+
+        public Task<int> UserTodayCommentCountAsync(int userId)
+        {
+            return Task.FromResult(new Random(userId).Next(0, 5));
+        }
+
         private List<Comment> GetList()
         {
             var items = new List<Comment>();

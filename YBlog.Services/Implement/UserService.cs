@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YBlog.Models.Database;
-using YBlog.Models.Enums;
 using YBlog.Models.Queries;
 using YBlog.Models.Requests;
 using YBlog.Services.Extensions;
@@ -26,11 +25,6 @@ namespace YBlog.Services.Implement
                 result = await _context.SaveChangesAsync() > 0;
             }
             return result;
-        }
-
-        public Task<List<User>> GetActiveUsersAsync(int take)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<List<User>> GetAsync(UserPagedQuery query)
@@ -112,7 +106,7 @@ namespace YBlog.Services.Implement
             return result;
         }
 
-        public async Task<UserCredential?> GetUserCredentialById(int id)
+        public async Task<UserCredential?> GetUserCredentialByUserId(int id)
         {
             return await _context.UserCredentials.FirstOrDefaultAsync(x => x.UserId == id);
         }
@@ -145,6 +139,11 @@ namespace YBlog.Services.Implement
         {
             var item = await _context.Users.FirstOrDefaultAsync(x => x.Id != id && x.Nickname == nickname);
             return item != null ? true : false;
+        }
+
+        public async Task<List<UserCredential>> GetUserCredentialsByUserIds(int[] ids)
+        {
+            return await _context.UserCredentials.Where(x => ids.Contains(x.UserId)).ToListAsync();
         }
     }
 }

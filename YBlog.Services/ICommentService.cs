@@ -11,5 +11,6 @@ namespace YBlog.Services
         Task<Comment?> GetByIdAsync(int id);
         Task<bool> CreateAsync(CommentRequest request, int userId);
         Task<bool> DeleteByIdAsync(int id);
+        Task<int> UserTodayCommentCountAsync(int userId);
     }
 }

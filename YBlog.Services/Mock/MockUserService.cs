@@ -80,11 +80,12 @@ namespace YBlog.Services.Mock
             return result;
         }
 
-        public Task<UserCredential?> GetUserCredentialById(int id)
+        public Task<UserCredential?> GetUserCredentialByUserId(int id)
         {
             var item = new UserCredential()
             {
                 Id = id,
+                UserId = id
             };
             return Task.FromResult<UserCredential?>(item);
         }
@@ -106,6 +107,24 @@ namespace YBlog.Services.Mock
                 return Task.FromResult(true);
             }
             return Task.FromResult(false);
+        }
+
+        public Task<List<UserCredential>> GetUserCredentialsByUserIds(int[] ids)
+        {
+            var result = new List<UserCredential>();
+            foreach (var id in ids)
+            {
+                var item = new UserCredential()
+                {
+                    Id = id,
+                    UserId = id,
+                    Username = "Username" + id,
+                    CreatedAt = DateTime.Now,
+                    LastModifiedAt = DateTime.Now,
+                };
+                result.Add(item);
+            }
+            return Task.FromResult(result);
         }
     }
 }

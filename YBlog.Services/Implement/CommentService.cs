@@ -119,5 +119,10 @@ namespace YBlog.Services.Implement
         {
             return await _context.Comments.FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
         }
+
+        public async Task<int> UserTodayCommentCountAsync(int userId)
+        {
+            return await _context.Comments.CountAsync(x => x.UserId == userId && x.CreatedAt.Date == DateTime.Now.Date);
+        }
     }
 }
