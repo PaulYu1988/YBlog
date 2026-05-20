@@ -206,6 +206,27 @@ namespace YBlog.Areas.Web.Controllers
                     Description = "为Assets资源文件夹设置CDN地址，将会从CDN加载Assets资源文件夹里的文件，例如：https://cdn.domain.com"
                 };
                 _context.WebConfigs.Add(assetsCDN);
+                var adIPWhitelist = new WebConfig()
+                {
+                    Name = "广告IP白名单",
+                    ConfigKey = "AdIPWhitelist",
+                    Description = "对于配置的IP地址不显示广告，多个IP请以英文逗号(,)隔开"
+                };
+                _context.WebConfigs.Add(adIPWhitelist);
+                var keywordBlacklist = new WebConfig()
+                {
+                    Name = "敏感词黑名单",
+                    ConfigKey = "KeywordBlacklist",
+                    Description = "禁止评论包含关键词，多个关键词请以英文逗号(,)隔开。"
+                };
+                _context.WebConfigs.Add(keywordBlacklist);
+                var dailyCommentLimit = new WebConfig()
+                {
+                    Name = "每日评论次数限制",
+                    ConfigKey = "DailyCommentLimit",
+                    Description = "用户每日评论次数限制，防止恶意评论。"
+                };
+                _context.WebConfigs.Add(dailyCommentLimit);
                 _context.SaveChanges();
                 var connectionString = _configuration.GetConnectionString("YBlog");
                 var compatibilityLevel = _configuration.GetValue<int?>("CompatibilityLevel");

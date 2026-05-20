@@ -14,5 +14,7 @@ namespace YBlog.Models.Custom
         public string? MetaDescription { get; set; }
         public string? AssetsCDN { get; set; }
         public string? AdIPWhitelist { get; set; }
+        public string? KeywordBlacklist { get; set; }
+        public string? DailyCommentLimit { get; set; }
     }
 }
