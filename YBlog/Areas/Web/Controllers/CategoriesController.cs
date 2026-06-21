@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using YBlog.Models.Enums;
 using YBlog.Models.Queries;
 using YBlog.Services;
 
@@ -32,7 +33,8 @@ namespace YBlog.Areas.Web.Controllers
             var query = new ArticlePagedQuery()
             {
                 Page = page,
-                CategoryId = id
+                CategoryId = id,
+                Status = (int)EnumCommentStatuses.Approved
             };
             var items = await _articleService.GetAsync(query);
             ViewBag.Articles = items;
