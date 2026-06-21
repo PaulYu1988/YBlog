@@ -13,6 +13,7 @@
     var articleList = ViewBag.ArticleList as List<Article>;
     var commentList = ViewBag.CommentList as List<CommentView>;
     var userList = ViewBag.UserList as List<User>;
+    var userCredentials = ViewBag.UserCredentials as List<UserCredential>;
 }
 @model DashboardView
 @section Scripts {
@@ -50,6 +51,8 @@
                             今日注册：@Model.TodayRegisterCount
                             <br />
                             今日登录：@Model.TodayLoginCount
+                            <br />
+                            用户总数：@Model.UserCount
                         </div>
                     </div>
                 </div>
@@ -95,8 +98,9 @@
         </div>
         <div class="layui-row layui-col-space10" style="margin-top: 6px;">
             <div class="layui-col-sm6">
-                <div class="layui-panel layui-padding-2">
+                <div class="layui-panel layui-padding-3">
                     <h4 style="margin-bottom: 12px;">最新文章</h4>
+                    <a href="/manage/articles" class="layui-font-gray" style="position: absolute;top: 16px;right: 16px;">全部</a>
                     @if (articleList != null && articleList.Any())
                     {
                         <ul>
@@ -118,8 +122,9 @@
                     
                     }
                 </div>
-                <div class="layui-panel layui-padding-2" style="margin-top: 12px;">
+                <div class="layui-panel layui-padding-3" style="margin-top: 12px;">
                     <h4 style="margin-bottom: 12px;">最新评论</h4>
+                    <a href="/manage/comments" class="layui-font-gray" style="position: absolute;top: 16px;right: 16px;">全部</a>
                     @if (commentList != null && commentList.Any())
                     {
                         <ul>
@@ -133,18 +138,28 @@
                         </ul>
                     }
                 </div>
-                <div class="layui-panel layui-padding-2" style="margin-top: 12px;">
+                <div class="layui-panel layui-padding-3" style="margin-top: 12px;">
                     <h4 style="margin-bottom: 12px;">最新用户</h4>
+                    <a href="/manage/users" class="layui-font-gray" style="position: absolute;top: 16px;right: 16px;">全部</a>
                     @if (userList != null && userList.Any())
                     {
                         <ul>
                             @foreach (var item in userList)
                             {
+                                var userCredential = userCredentials?.FirstOrDefault(x => x.UserId == item.Id);
                                 <li style="padding-bottom: 4px;">
                                     <span class="layui-badge layui-bg-gray">@item.CreatedAt.ToViewString()</span>
                                     <span class="layui-badge @(item.Type == (int)EnumUserTypes.Admin?"layui-bg-green":"layui-bg-gray")">@(((EnumUserTypes)item.Type).GetDescription())</span>
                                     <span class="layui-badge @(item.Status == (int)EnumUserStatuses.Disabled?"layui-bg-orange":"layui-bg-green")">@(((EnumUserStatuses)item.Status).GetDescription())</span>
-                                    <a href="/manage/users/edit/@item.Id">@item.Nickname</a>
+                                    <a href="/manage/users/edit/@item.Id">
+                                        @if (@userCredential?.Username != item.Nickname)
+                                        {
+                                            <span>@userCredential?.Username（@item.Nickname）</span>
+                                        }else
+                                        {
+                                            <span>@userCredential?.Username</span>
+                                        }
+                                    </a>
                                     <span class="layui-badge layui-bg-gray">@item.RegIp</span>
                                 </li>    
                             }
@@ -153,8 +168,9 @@
                 </div>
             </div>
             <div class="layui-col-sm6">
-                <div class="layui-panel layui-padding-2">
+                <div class="layui-panel layui-padding-3">
                     <h4 style="margin-bottom: 12px;">操作记录</h4>
+                    <a href="/manage/operations" class="layui-font-gray" style="position: absolute;top: 16px;right: 16px;">全部</a>
                     @if (operations != null && operations.Any())
                     {
                         <div class="layui-timeline">
@@ -254,8 +270,9 @@
                         </div>
                     }
                 </div>
-                <div class="layui-panel layui-padding-2" style="margin-top: 12px;">
+                <div class="layui-panel layui-padding-3" style="margin-top: 12px;">
                     <h4 style="margin-bottom: 12px;">系统日志</h4>
+                    <a href="/manage/logs" class="layui-font-gray" style="position: absolute;top: 16px;right: 16px;">全部</a>
                     @if (logs != null && logs.Any())
                     {
                         <ul>

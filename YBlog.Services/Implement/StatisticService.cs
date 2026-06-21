@@ -23,6 +23,7 @@ namespace YBlog.Services.Implement
             };
             dashboardView.TodayRegisterCount = _context.Users.Count(x => x.CreatedAt.Date == DateTime.Now.Date);
             dashboardView.TodayLoginCount = _context.Users.Count(x => x.LastLoginedAt.Date == DateTime.Now.Date);
+            dashboardView.UserCount = _context.Users.Count();
             dashboardView.ArticleCount = _context.Articles.Count(x => x.IsDeleted == false);
             dashboardView.CommentCount = _context.Comments.Count(x => x.IsDeleted == false);
             dashboardView.TagCount = _context.Tags.Count();

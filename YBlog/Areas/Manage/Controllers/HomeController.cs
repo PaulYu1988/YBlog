@@ -40,7 +40,9 @@ namespace YBlog.Areas.Manage.Controllers
             ViewBag.CommentList = await _commentService.GetAsync(commentQuery);
             var userQuery = new UserPagedQuery();
             userQuery.SetPageSize(5);
-            ViewBag.UserList = await _userService.GetAsync(userQuery);
+            var userList = await _userService.GetAsync(userQuery);
+            ViewBag.UserList = userList;
+            ViewBag.UserCredentials = await _userService.GetUserCredentialsByUserIds(userList.Select(x => x.Id).ToArray());
             var logQuery = new LogPagedQuery();
             logQuery.SetPageSize(3);
             ViewBag.Logs = await _logService.GetAsync(logQuery);
