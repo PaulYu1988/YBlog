@@ -26,7 +26,10 @@ function renderChart1(items) {
         title: {
             text: '文章数量统计',
             subtext: '',
-            left: 'left'
+            left: 'left',
+            textStyle: {
+                fontSize: 14
+            }
         },
         tooltip: {
             trigger: 'item'
@@ -68,7 +71,10 @@ function renderChart2(items) {
     });
     var option2 = {
         title: {
-            text: '阅读/评论统计'
+            text: '阅读/评论统计',
+            textStyle: {
+                fontSize: 14
+            }
         },
         xAxis: {
             type: 'category',
