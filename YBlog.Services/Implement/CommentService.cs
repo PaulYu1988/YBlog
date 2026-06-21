@@ -26,6 +26,7 @@ namespace YBlog.Services.Implement
             var article = await _articleService.GetByIdAsync(request.ArticleId.Value);
             if (article == null)
                 return false;
+            article.CommentCount = article.CommentCount + 1;
             var comment = new Comment()
             {
                 ArticleId = article.Id,
@@ -62,6 +63,11 @@ namespace YBlog.Services.Implement
                 return false;
             curr.IsDeleted = true;
             curr.LastModifiedAt = DateTime.Now;
+            var currArticle = await _context.Articles.FirstOrDefaultAsync(x => x.Id == curr.ArticleId);
+            if (currArticle != null)
+            {
+                currArticle.CommentCount = currArticle.CommentCount - 1;
+            }
             return (await _context.SaveChangesAsync()) > 0;
         }
 

@@ -30,8 +30,19 @@ namespace YBlog.Areas.Manage.Controllers
             _cacheService = cacheService;
             _operationService = operationService;
         }
-        public async Task<IActionResult> IndexAsync(ArticlePagedQuery query)
+        public async Task<IActionResult> IndexAsync(ArticlePagedQuery query, string orderBy, string orderDirection)
         {
+            var validOrderBys = new List<string>() { "Id", "ReadCount", "CommentCount" };
+            if (!string.IsNullOrWhiteSpace(orderBy) && validOrderBys.Any(x => x == orderBy))
+            {
+                query.SetOrderBy(orderBy);
+                query.SetOrderDirection(orderDirection == "ASC" ? EnumOrderDirections.Asc : EnumOrderDirections.Desc);
+            }
+            else
+            {
+                query.SetOrderBy("Id");
+                query.SetOrderDirection(EnumOrderDirections.Desc);
+            }
             var items = await _articleService.GetAsync(query);
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories;

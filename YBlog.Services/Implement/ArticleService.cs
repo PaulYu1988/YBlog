@@ -78,7 +78,22 @@ namespace YBlog.Services.Implement
                 queryable = queryable.Where(x => x.Status == query.Status);
             }
             queryable = queryable.Where(x => x.IsDeleted == false);
-            var items = await queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.Id).ToPagedListAsync(query);
+            switch (query.OrderBy)
+            {
+                case "Id":
+                    queryable = query.OrderDirection == EnumOrderDirections.Asc ? queryable.OrderByDescending(x => x.IsTop).ThenBy(x => x.Id) : queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.Id);
+                    break;
+                case "ReadCount":
+                    queryable = query.OrderDirection == EnumOrderDirections.Asc ? queryable.OrderByDescending(x => x.IsTop).ThenBy(x => x.ReadCount) : queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.ReadCount);
+                    break;
+                case "CommentCount":
+                    queryable = query.OrderDirection == EnumOrderDirections.Asc ? queryable.OrderByDescending(x => x.IsTop).ThenBy(x => x.CommentCount) : queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.CommentCount);
+                    break;
+                default:
+                    queryable = query.OrderDirection == EnumOrderDirections.Asc ? queryable.OrderByDescending(x => x.IsTop).ThenBy(x => x.Id) : queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.Id);
+                    break;
+            }
+            var items = await queryable.ToPagedListAsync(query);
             return items;
         }
 
