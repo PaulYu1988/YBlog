@@ -1,5 +1,10 @@
 @{
     var query = ViewBag.Query as CommentPagedQuery;
+    var articles = ViewBag.Articles as List<Article>;
+    if (articles == null)
+    {
+        articles = new List<Article>();
+    }
 }
 @section Scripts {
     <script src="~/js/jquery.delete.js" asp-append-version="true"></script>
@@ -56,13 +61,33 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
+                        var article = articles.FirstOrDefault(x => x.Id == item.ArticleId);
                         <tr>
                             <td>@item.Id</td>
-                            <td>@item.CommentContent</td>
+                            <td>
+                                <p style="margin-bottom: 4px;">
+                                    @if (article != null)
+                                    {
+                                        if (article.Status == (int)EnumArticleStatuses.Publish)
+                                        {
+                                            <span class="layui-badge layui-bg-green">@(EnumArticleStatuses.Publish.GetDescription())</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="layui-badge layui-bg-orange">@(EnumArticleStatuses.Draft.GetDescription())</span>
+                                        }
+                                        <a href="/articles/@article.Id" target="_blank">@article.Title</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="/articles/@item.ArticleId" target="_blank">未找到文章信息</a>
+                                    }
+                                </p>
+                                <p>@item.CommentContent</p>
+                            </td>
                             <td>@item.Nickname</td>
                             <td>@item.CreatedAt.ToDateTimeString()</td>
                             <td>
-                                <a href="/articles/@item.ArticleId" target="_blank" class="layui-btn layui-bg-blue layui-btn-xs">查看</a>
                                 <a data-id="@item.Id" class="layui-btn layui-bg-red layui-btn-xs btn-delete">删除</a>
                             </td>
                         </tr>

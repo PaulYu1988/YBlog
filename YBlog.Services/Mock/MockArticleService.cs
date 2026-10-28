@@ -26,7 +26,8 @@ namespace YBlog.Services.Mock
         public Task<List<Article>> GetAsync(ArticlePagedQuery query)
         {
             var items = new List<Article>();
-            if (query.Title != "none") {
+            if (query.Title != "none")
+            {
                 items = GetMockList();
             }
             var totalCount = 250;
@@ -47,15 +48,21 @@ namespace YBlog.Services.Mock
             return Task.FromResult(item);
         }
 
+        public Task<List<Article>> GetByIdsAsync(int[] ids)
+        {
+            var items = GetMockList().Where(x => ids.Contains(x.Id)).ToList();
+            return Task.FromResult(items);
+        }
+
         public Task<List<Article>> GetRelatedAsync(int articleId, int take = 8)
         {
             var items = GetMockList().Take(take).ToList();
             return Task.FromResult(items);
         }
 
-        public Task ReadAsync(Article article)
+        public Task<bool> ReadAsync(int id)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         public Task<bool> UpdateAsync(ArticleRequest request)

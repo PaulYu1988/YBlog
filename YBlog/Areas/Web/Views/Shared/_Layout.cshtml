@@ -4,6 +4,7 @@
     var metaKeywords = ViewData["MetaKeywords"]?.ToString();
     var metaDescription = ViewData["MetaDescription"]?.ToString();
     var themeMode = Context.Request.GetThemeMode();
+    var noIndex = ViewBag.NoIndex as bool?;
 }
 <!DOCTYPE html>
 <html lang="zh" @Html.Raw(themeMode == EnumThemeModes.Dark ? "class=\"dark\"" : string.Empty)>
@@ -11,6 +12,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
+    @if (noIndex.HasValue && noIndex == true)
+    {
+        <meta name="robots" content="noindex">
+    }
     @if (!string.IsNullOrWhiteSpace(metaKeywords))
     {
         <meta name="keywords" content="@metaKeywords" />

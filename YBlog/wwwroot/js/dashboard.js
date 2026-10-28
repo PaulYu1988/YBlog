@@ -100,12 +100,14 @@ function renderChart2(items) {
             {
                 name: '阅读',
                 data: readCounts,
-                type: 'line'
+                type: 'line',
+                itemStyle: { normal: { label: { show: true, formatter: '{c}' } } }
             },
             {
                 name: '评论',
                 data: commentCounts,
-                type: 'line'
+                type: 'line',
+                itemStyle: { normal: { label: { show: true, formatter: '{c}' } } }
             }
         ]
     };

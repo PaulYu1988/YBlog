@@ -120,6 +120,11 @@ namespace YBlog.Services.Implement
             return _context.Articles.FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
         }
 
+        public Task<List<Article>> GetByIdsAsync(int[] ids)
+        {
+            return _context.Articles.Where(x => ids.Contains(x.Id) && x.IsDeleted == false).ToListAsync();
+        }
+
         public async Task<List<Article>> GetRelatedAsync(int articleId, int take = 8)
         {
             var result = new List<Article>();
@@ -143,8 +148,13 @@ namespace YBlog.Services.Implement
             return result;
         }
 
-        public async Task ReadAsync(Article article)
+        public async Task<bool> ReadAsync(int id)
         {
+            var article = await _context.Articles.FirstOrDefaultAsync(x => x.Id == id);
+            if (article == null)
+                return false;
+            if (article.IsDeleted || article.Status != (int)EnumArticleStatuses.Publish)
+                return false;
             article.ReadCount++;
             var date = DateTime.Now.Date;
             var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == (int)EnumDailyStatisticTypes.Article && x.Date == date);
@@ -163,7 +173,11 @@ namespace YBlog.Services.Implement
                 };
                 _context.DailyStatistics.Add(articleDailyStatistic);
             }
-            await _context.SaveChangesAsync();
+            if ((await _context.SaveChangesAsync()) > 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> UpdateAsync(ArticleRequest request)

@@ -49,6 +49,18 @@
         document.cookie = 'ThemeMode' + "=" + encodeURIComponent(checked ? 'dark' : 'light') + expires + "; path=/";
     });
 });
+function readCount(id, token) {
+    $.ajax({
+        type: "post",
+        url: '/common/readcount',
+        contentType: "application/json",
+        data: JSON.stringify({
+            id: id,
+            token: token
+        }),
+        dataType: "json"
+    });
+}
 function searchArticle() {
     var val = $('.input-search').val();
     if (val) {

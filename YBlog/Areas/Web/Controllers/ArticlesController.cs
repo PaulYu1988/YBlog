@@ -1,5 +1,6 @@
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using YBlog.Extensions;
 using YBlog.Models.Custom;
 using YBlog.Models.Database;
@@ -38,9 +39,9 @@ namespace YBlog.Areas.Web.Controllers
             var item = await _articleService.GetByIdAsync(id.Value);
             if (item == null || item.Status != (int)EnumArticleStatuses.Publish)
             {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return View("~/Areas/Web/Views/Home/404.cshtml");
             }
-            await _articleService.ReadAsync(item);
             ViewBag.Category = await _categoryService.GetByIdAsync(item.CategoryId);
             HandleArticleContent(item);
             ViewBag.RelatedArticles = await _articleService.GetRelatedAsync(item.Id);
@@ -57,6 +58,9 @@ namespace YBlog.Areas.Web.Controllers
                 ViewData["MetaKeywords"] = string.Join(",", tags.Select(x => x.Text).ToArray());
             }
             ViewData["MetaDescription"] = item.Description;
+            var readCountToken = Guid.NewGuid().ToString();
+            Request.HttpContext.Session.SetString(EnumSessionNames.ReadCountToken.ToString(), readCountToken);
+            ViewBag.ReadCountToken = readCountToken;
             return View(item);
         }
         [HttpPost]

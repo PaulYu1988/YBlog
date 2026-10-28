@@ -66,6 +66,7 @@
                 });
             }
         });
+        readCount(@(Model.Id), '@(ViewBag.ReadCountToken)');
     </script>
 }
 <div class="layui-row layui-col-space15">
@@ -97,7 +98,7 @@
                         <i class="layui-icon layui-icon-note layui-font-12">
                             @foreach (var item in tags)
                             {
-                                <a class="layui-font-12">@item.Text</a>
+                                <a class="layui-font-12" href="/tags/@item.Id">@item.Text</a>
                             }
                         </i>
                     }

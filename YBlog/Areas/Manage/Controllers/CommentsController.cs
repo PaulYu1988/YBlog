@@ -13,16 +13,23 @@ namespace YBlog.Areas.Manage.Controllers
     {
         protected ICommentService _commentService;
         protected IOperationService _operationService;
-        public CommentsController(ICommentService commentService, IOperationService operationService)
+        protected IArticleService _articleService;
+        public CommentsController(ICommentService commentService, IOperationService operationService, IArticleService articleService)
         {
             _commentService = commentService;
             _operationService = operationService;
+            _articleService = articleService;
         }
         [HttpGet]
         public async Task<IActionResult> IndexAsync(CommentPagedQuery query)
         {
             var items = await _commentService.GetAsync(query);
             ViewBag.Query = query;
+            var articleIds = items.Select(x => x.ArticleId).Distinct().ToArray();
+            if (articleIds.Any())
+            {
+                ViewBag.Articles = await _articleService.GetByIdsAsync(articleIds);
+            }
             return View(items);
         }
         [HttpDelete]
