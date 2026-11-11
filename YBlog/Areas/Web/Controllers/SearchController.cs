@@ -30,6 +30,7 @@ namespace YBlog.Areas.Web.Controllers
             ViewBag.Articles = items;
             ViewBag.Query = query;
             ViewBag.TopArticles = _cacheService.GetTopArticles();
+            ViewBag.NoIndex = true;
             return View();
         }
     }

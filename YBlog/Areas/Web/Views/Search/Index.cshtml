@@ -2,7 +2,7 @@
     var query = ViewBag.Query as ArticlePagedQuery;
     ViewData["Title"] = query?.Title;
     ViewData["MetaKeywords"] = query?.Title;
-    ViewData["MetaDescription"] = query?.Title;
+    ViewData["MetaDescription"] = $"搜索{query?.Title}相关的文章，查看文章内容与最新更新，快速找到你感兴趣的信息。";
 }
 <div class="layui-row layui-col-space15">
     <div class="layui-col-xs12 layui-col-md9">

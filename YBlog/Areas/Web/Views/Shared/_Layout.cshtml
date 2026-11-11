@@ -14,7 +14,7 @@
     <title>@ViewData["Title"]</title>
     @if (noIndex.HasValue && noIndex == true)
     {
-        <meta name="robots" content="noindex">
+        <meta name="robots" content="noindex, follow">
     }
     @if (!string.IsNullOrWhiteSpace(metaKeywords))
     {

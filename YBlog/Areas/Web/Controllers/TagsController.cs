@@ -36,7 +36,7 @@ namespace YBlog.Areas.Web.Controllers
                 TagId = id.Value
             };
             var items = await _articleService.GetAsync(query);
-            if (query.TotalCount < 5)
+            if (query.TotalCount < 10)
             {
                 ViewBag.NoIndex = true;
             }

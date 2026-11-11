@@ -21,13 +21,35 @@
         }
     }
 }
+@functions {
+    public string GetCurrentUrl(string url, int? page)
+    {
+        var currentUrl = string.Format(url, page);
+        if (page == 1)
+        {
+            if (currentUrl.Contains("page=1"))
+            {
+                currentUrl = currentUrl.Replace("page=1", string.Empty);
+            }
+            if (currentUrl.EndsWith("?"))
+            {
+                currentUrl = currentUrl.TrimEnd('?');
+            }
+            if (currentUrl.EndsWith("&"))
+            {
+                currentUrl = currentUrl.TrimEnd('&');
+            }
+        }
+        return currentUrl;
+    }
+}
 @if (query != null && query.PageCount > 1)
 {
     <div id="pagination">
         <div class="layui-box layui-laypage layui-laypage-default">
             @if (query.Page > 1)
             {
-                <a class="layui-laypage-prev" href="@string.Format(url,query.Page-1)">上一页</a>
+                <a class="layui-laypage-prev" href="@GetCurrentUrl(url, query.Page - 1)">上一页</a>
             }
             else
             {
@@ -35,18 +57,18 @@
             }
             @if (query.Page - extendCount - 1 == 1)
             {
-                <a class="layui-laypage-first" title="首页" href="@string.Format(url,1)">1</a>
+                <a class="layui-laypage-first" title="首页" href="@GetCurrentUrl(url, 1)">1</a>
             }
             @if (query.Page - extendCount > 2)
             {
-                <a class="layui-laypage-first" title="首页" href="@string.Format(url,1)">1</a>
+                <a class="layui-laypage-first" title="首页" href="@GetCurrentUrl(url, 1)">1</a>
                 <span class="layui-laypage-spr">…</span>
             }
             @for (int i = extendCount; i > 0; i--)
             {
                 if (query.Page - i >= 1)
                 {
-                    <a href="@string.Format(url,query.Page-i)">@(query.Page - i)</a>
+                    <a href="@GetCurrentUrl(url, query.Page - i)">@(query.Page - i)</a>
                 }
             }
             <span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>@query.Page</em></span>
@@ -54,21 +76,21 @@
             {
                 if (query.Page + i <= query.PageCount)
                 {
-                    <a href="@string.Format(url,query.Page+i)">@(query.Page + i)</a>
+                    <a href="@GetCurrentUrl(url, query.Page + i)">@(query.Page + i)</a>
                 }
             }
             @if (query.Page + extendCount + 2 <= query.PageCount)
             {
                 <span class="layui-laypage-spr">…</span>
-                <a class="layui-laypage-last" title="尾页" href="@string.Format(url,query.PageCount)">@query.PageCount</a>
+                <a class="layui-laypage-last" title="尾页" href="@GetCurrentUrl(url, query.PageCount)">@query.PageCount</a>
             }
             @if (query.Page + extendCount + 1 == query.PageCount)
             {
-                <a class="layui-laypage-last" title="尾页" href="@string.Format(url,query.PageCount)">@query.PageCount</a>
+                <a class="layui-laypage-last" title="尾页" href="@GetCurrentUrl(url, query.PageCount)">@query.PageCount</a>
             }
             @if (query.Page < query.PageCount)
             {
-                <a class="layui-laypage-next" href="@string.Format(url,query.Page+1)">下一页</a>
+                <a class="layui-laypage-next" href="@GetCurrentUrl(url, query.Page + 1)">下一页</a>
             }
             else
             {
