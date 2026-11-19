@@ -17,5 +17,6 @@ namespace YBlog.Services
         string GetAssetsUrl(string path);
         string GetAbbreviation(string? nickname);
         string GetAvatarBackgroundColor(int? userId);
+        List<Bot> GetBots();
     }
 }

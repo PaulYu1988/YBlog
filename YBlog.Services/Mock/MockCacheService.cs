@@ -360,5 +360,11 @@ namespace YBlog.Services.Mock
             _memoryCache.Set(cacheKey, color);
             return color;
         }
+
+        public List<Bot> GetBots()
+        {
+            var bots = new List<Bot>();
+            return bots;
+        }
     }
 }

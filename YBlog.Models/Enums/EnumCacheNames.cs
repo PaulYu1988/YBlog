@@ -8,5 +8,6 @@ namespace YBlog.Models.Enums
         HotTags = 4,
         Links = 5,
         Advertisements = 6,
+        Bots = 7,
     }
 }

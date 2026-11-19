@@ -57,7 +57,7 @@ namespace YBlog.Services.Implement
             int showDay = 14;
             var preDay = DateTime.Now.AddDays(0 - showDay).Date;
             var articleDailyStatistics = _context.DailyStatistics.Where(x => x.Type == (int)EnumDailyStatisticTypes.Article && x.Date >= preDay).ToList();
-            var commentDailyStatistics = _context.DailyStatistics.Where(x => x.Type == (int)EnumDailyStatisticTypes.Comment && x.Date >= preDay).ToList();
+            var articleBotDailyStatistics = _context.DailyStatistics.Where(x => x.Type == (int)EnumDailyStatisticTypes.ArticleBot && x.Date >= preDay).ToList();
             for (var i = 1; i <= showDay; i++)
             {
                 var date = preDay.AddDays(i);
@@ -65,7 +65,7 @@ namespace YBlog.Services.Implement
                 {
                     Date = date.ToString("MM-dd"),
                     ReadCount = articleDailyStatistics.FirstOrDefault(x => x.Date == date)?.Count ?? 0,
-                    CommentCount = commentDailyStatistics.FirstOrDefault(x => x.Date == date)?.Count ?? 0,
+                    ArticleBotCount = articleBotDailyStatistics.FirstOrDefault(x => x.Date == date)?.Count ?? 0,
                 });
             }
             return statistics;

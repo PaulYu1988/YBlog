@@ -63,15 +63,15 @@ var myChart2 = echarts.init(chart2Dom);
 function renderChart2(items) {
     var dates = [];
     var readCounts = [];
-    var commentCounts = [];
+    var articleBotCounts = [];
     items.forEach(function (item) {
         dates.push(item.date);
         readCounts.push(item.readCount);
-        commentCounts.push(item.commentCount);
+        articleBotCounts.push(item.articleBotCount);
     });
     var option2 = {
         title: {
-            text: '阅读/评论统计',
+            text: '阅读/爬虫 统计',
             textStyle: {
                 fontSize: 14
             }
@@ -81,7 +81,7 @@ function renderChart2(items) {
             data: dates
         },
         legend: {
-            data: ['阅读', '评论'],
+            data: ['阅读', '爬虫'],
             left: 'right'
         },
         tooltip: {
@@ -104,8 +104,8 @@ function renderChart2(items) {
                 itemStyle: { normal: { label: { show: true, formatter: '{c}' } } }
             },
             {
-                name: '评论',
-                data: commentCounts,
+                name: '爬虫',
+                data: articleBotCounts,
                 type: 'line',
                 itemStyle: { normal: { label: { show: true, formatter: '{c}' } } }
             }

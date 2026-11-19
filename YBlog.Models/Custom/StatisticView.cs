@@ -14,6 +14,6 @@ namespace YBlog.Models.Custom
     {
         public string? Date { get; set; }
         public int ReadCount { get; set; }
-        public int CommentCount { get; set; }
+        public int ArticleBotCount { get; set; }
     }
 }

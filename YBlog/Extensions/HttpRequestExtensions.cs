@@ -1,11 +1,26 @@
-using YBlog.Models.Enums;
-using YBlog.Models.Database;
 using YBlog.Models.Custom;
+using YBlog.Models.Database;
+using YBlog.Models.Enums;
+using YBlog.Services;
 
 namespace YBlog.Extensions
 {
     public static class HttpRequestExtensions
     {
+        public static bool CheckIsBot(this HttpRequest httpRequest)
+        {
+            var cacheService = httpRequest.HttpContext.RequestServices.GetService<ICacheService>();
+            if (cacheService == null)
+                return false;
+            var bots = cacheService.GetBots();
+            if (!bots.Any())
+                return false;
+            var userAgent = httpRequest.Headers["User-Agent"];
+            if (string.IsNullOrWhiteSpace(userAgent))
+                return false;
+            var userAgentString = userAgent.ToString();
+            return bots.Any(x => userAgentString.Contains(x.IdentificationCode, StringComparison.OrdinalIgnoreCase));
+        }
         public static string GetRequestIpAddress(this HttpRequest httpRequest)
         {
             var remoteIpAddress = httpRequest.Headers["X-Forwarded-For"].FirstOrDefault();

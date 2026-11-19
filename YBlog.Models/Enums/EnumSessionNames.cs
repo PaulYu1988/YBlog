@@ -6,6 +6,5 @@ namespace YBlog.Models.Enums
         From = 2,
         Captcha = 3,
         ShowAd = 4,
-        ReadCountToken = 5
     }
 }

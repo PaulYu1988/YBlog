@@ -46,7 +46,7 @@ namespace YBlog.Services.Mock
                 statisticView.DailyStatistics.Add(new DailyStatisticView()
                 {
                     Date = date.ToString("MM-dd"),
-                    CommentCount = rnd.Next(10, 100),
+                    ArticleBotCount = rnd.Next(10, 100),
                     ReadCount = rnd.Next(10, 100),
                 });
             }

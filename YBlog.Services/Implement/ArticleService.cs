@@ -148,16 +148,20 @@ namespace YBlog.Services.Implement
             return result;
         }
 
-        public async Task<bool> ReadAsync(int id)
+        public async Task<bool> ReadAsync(int id, bool isBot)
         {
             var article = await _context.Articles.FirstOrDefaultAsync(x => x.Id == id);
             if (article == null)
                 return false;
             if (article.IsDeleted || article.Status != (int)EnumArticleStatuses.Publish)
                 return false;
-            article.ReadCount++;
+            if (!isBot)
+            {
+                article.ReadCount++;
+            }
+            var type = isBot ? EnumDailyStatisticTypes.ArticleBot : EnumDailyStatisticTypes.Article;
             var date = DateTime.Now.Date;
-            var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == (int)EnumDailyStatisticTypes.Article && x.Date == date);
+            var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == (int)type && x.Date == date);
             if (articleDailyStatistic != null)
             {
                 articleDailyStatistic.Count++;
@@ -167,7 +171,7 @@ namespace YBlog.Services.Implement
             {
                 articleDailyStatistic = new DailyStatistic()
                 {
-                    Type = (int)EnumDailyStatisticTypes.Article,
+                    Type = (int)type,
                     Date = date,
                     Count = 1
                 };

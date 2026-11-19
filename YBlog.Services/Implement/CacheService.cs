@@ -323,5 +323,21 @@ namespace YBlog.Services.Implement
             _memoryCache.Set(cacheKey, color);
             return color;
         }
+
+        public List<Bot> GetBots()
+        {
+            var cacheKey = EnumCacheNames.Bots.ToString();
+            var cacheItems = _memoryCache.Get<List<Bot>>(cacheKey);
+            if (cacheItems != null)
+            {
+                return cacheItems;
+            }
+            var result = _context.Bots.ToList();
+            if (result.Any())
+            {
+                _memoryCache.Set(cacheKey, result, TimeSpan.FromHours(8));
+            }
+            return result;
+        }
     }
 }

@@ -58,9 +58,7 @@ namespace YBlog.Areas.Web.Controllers
                 ViewData["MetaKeywords"] = string.Join(",", tags.Select(x => x.Text).ToArray());
             }
             ViewData["MetaDescription"] = item.Description;
-            var readCountToken = Guid.NewGuid().ToString();
-            Request.HttpContext.Session.SetString(EnumSessionNames.ReadCountToken.ToString(), readCountToken);
-            ViewBag.ReadCountToken = readCountToken;
+            await _articleService.ReadAsync(item.Id, Request.CheckIsBot());
             return View(item);
         }
         [HttpPost]

@@ -60,7 +60,7 @@ namespace YBlog.Services.Mock
             return Task.FromResult(items);
         }
 
-        public Task<bool> ReadAsync(int id)
+        public Task<bool> ReadAsync(int id, bool isBot)
         {
             return Task.FromResult(true);
         }
