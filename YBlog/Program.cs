@@ -28,6 +28,7 @@ if (mockEnabled)
     builder.Services.AddScoped<IArticleService, MockArticleService>();
     builder.Services.AddScoped<ICategoryService, MockCategoryService>();
     builder.Services.AddScoped<ICommentService, MockCommentService>();
+    builder.Services.AddScoped<IBotService, MockBotService>();
     builder.Services.AddScoped<ITagService, MockTagService>();
     builder.Services.AddScoped<IUserService, MockUserService>();
     builder.Services.AddScoped<INavService, MockNavService>();
@@ -45,6 +46,7 @@ else
     builder.Services.AddScoped<IArticleService, ArticleService>();
     builder.Services.AddScoped<ICategoryService, CategoryService>();
     builder.Services.AddScoped<ICommentService, CommentService>();
+    builder.Services.AddScoped<IBotService, BotService>();
     builder.Services.AddScoped<ITagService, TagService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<INavService, NavService>();

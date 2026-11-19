@@ -261,6 +261,12 @@ namespace YBlog.Services.Mock
             });
             marketManage.Items.Add(new ManageMenuItem()
             {
+                Text = "爬虫管理",
+                Icon = "layui-icon-engine",
+                Url = "/manage/bots"
+            });
+            marketManage.Items.Add(new ManageMenuItem()
+            {
                 Text = "广告代码",
                 Icon = "layui-icon-fonts-code",
                 Url = "/manage/advertisements"

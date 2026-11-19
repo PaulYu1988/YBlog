@@ -1,0 +1,65 @@
+@using YBlog.Models.Enums
+@model BotRequest
+@section Scripts {
+    <script>
+        $('form').initForm({});
+    </script>
+}
+<div class="layui-card">
+    <div class="layui-card-header">
+        <span class="layui-breadcrumb">
+            <a href="">控制台</a>
+            <a href="">运营管理</a>
+            <a href="/manage/bots">爬虫管理</a>
+            <a><cite>@(Model.Id.HasValue ? "编辑" : "新增")</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-row">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Name" lay-verify="required" maxlength="50" autocomplete="off" class="layui-input" value="@Model.Name">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">识别码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="IdentificationCode" lay-verify="required" maxlength="100" autocomplete="off" class="layui-input" value="@Model.IdentificationCode">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-block">
+                        <select name="Type" lay-verify="required">
+                            <option value="">请选择</option>
+                            @foreach (EnumBotTypes item in Enum.GetValues(typeof(EnumBotTypes)))
+                            {
+                                if (Model.Type == (int)item)
+                                {
+                                    <option value="@((int)item)" selected>@item.GetDescription()</option>
+                                }
+                                else
+                                {
+                                    <option value="@((int)item)">@item.GetDescription()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-primary btn-back">返回</button>
+                    <button type="submit" class="layui-btn" lay-submit>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

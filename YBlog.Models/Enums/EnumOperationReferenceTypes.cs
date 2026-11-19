@@ -25,6 +25,8 @@ namespace YBlog.Models.Enums
         [Description("Sitemap")]
         Sitemap = 10,
         [Description("文件")]
-        File = 11
+        File = 11,
+        [Description("爬虫")]
+        Bot = 12
     }
 }

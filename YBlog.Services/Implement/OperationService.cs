@@ -56,6 +56,7 @@ namespace YBlog.Services.Implement
                 var navs = new List<Nav>();
                 var links = new List<Link>();
                 var advertisements = new List<Advertisement>();
+                var bots = new List<Bot>();
                 var userIds = items.Select(x => x.UserId).ToList();
                 if (items.Any(x => x.ReferenceType == (int)EnumOperationReferenceTypes.User))
                 {
@@ -99,6 +100,11 @@ namespace YBlog.Services.Implement
                     var ids = items.Where(x => x.ReferenceType == (int)EnumOperationReferenceTypes.Advertisement && x.ReferenceId.HasValue).Select(x => x.ReferenceId);
                     advertisements = await _context.Advertisements.Where(x => ids.Contains(x.Id)).ToListAsync();
                 }
+                if (items.Any(x => x.ReferenceType == (int)EnumOperationReferenceTypes.Bot))
+                {
+                    var ids = items.Where(x => x.ReferenceType == (int)EnumOperationReferenceTypes.Bot && x.ReferenceId.HasValue).Select(x => x.ReferenceId);
+                    bots = await _context.Bots.Where(x => ids.Contains(x.Id)).ToListAsync();
+                }
                 foreach (var item in items)
                 {
                     var model = new OperationView()
@@ -139,6 +145,9 @@ namespace YBlog.Services.Implement
                                 break;
                             case (int)EnumOperationReferenceTypes.Advertisement:
                                 model.Reference = advertisements.FirstOrDefault(x => x.Id == item.ReferenceId);
+                                break;
+                            case (int)EnumOperationReferenceTypes.Bot:
+                                model.Reference = bots.FirstOrDefault(x => x.Id == item.ReferenceId);
                                 break;
                         }
                     }
