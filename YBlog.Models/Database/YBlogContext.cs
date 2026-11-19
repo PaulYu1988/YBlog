@@ -21,6 +21,8 @@ public partial class YBlogContext : DbContext
 
     public virtual DbSet<ArticleTag> ArticleTags { get; set; }
 
+    public virtual DbSet<Bot> Bots { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Comment> Comments { get; set; }
@@ -73,6 +75,16 @@ public partial class YBlogContext : DbContext
         });
 
         modelBuilder.Entity<ArticleTag>(entity =>
+        {
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastModifiedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Bot>(entity =>
         {
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
