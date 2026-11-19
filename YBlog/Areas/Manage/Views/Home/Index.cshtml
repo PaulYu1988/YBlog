@@ -237,6 +237,10 @@
                                                         var advertisement = item.Reference as Advertisement;
                                                         <a href="/manage/advertisements/edit/@advertisement?.Id">@item.Description</a>
                                                         break;
+                                                    case (int)EnumOperationReferenceTypes.Bot:
+                                                        var bot = item.Reference as Bot;
+                                                        <a href="/manage/bots/edit/@bot?.Id">@item.Description</a>
+                                                        break;
                                                 }
                                             }
                                             else

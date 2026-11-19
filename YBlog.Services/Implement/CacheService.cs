@@ -170,6 +170,12 @@ namespace YBlog.Services.Implement
             });
             siteManage.Items.Add(new ManageMenuItem()
             {
+                Text = "爬虫管理",
+                Icon = "layui-icon-engine",
+                Url = "/manage/bots"
+            });
+            siteManage.Items.Add(new ManageMenuItem()
+            {
                 Text = "Sitemap",
                 Icon = "layui-icon-website",
                 Url = "/manage/sitemaps"
@@ -233,12 +239,6 @@ namespace YBlog.Services.Implement
                 Text = "友情链接",
                 Icon = "layui-icon-link",
                 Url = "/manage/links"
-            });
-            marketManage.Items.Add(new ManageMenuItem()
-            {
-                Text = "爬虫管理",
-                Icon = "layui-icon-engine",
-                Url = "/manage/bots"
             });
             marketManage.Items.Add(new ManageMenuItem()
             {
