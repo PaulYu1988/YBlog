@@ -49,6 +49,54 @@
         document.cookie = 'ThemeMode' + "=" + encodeURIComponent(checked ? 'dark' : 'light') + expires + "; path=/";
     });
 });
+function readCount(id) {
+    $.ajax({
+        type: "post",
+        url: '/common/readcount',
+        contentType: "application/json",
+        data: JSON.stringify({
+            id: id
+        }),
+        dataType: "json"
+    });
+}
+function renderUserInteractions(id) {
+    $.ajax({
+        type: 'GET',
+        url: '/articles/userinteractions/' + id,
+        dataType: 'json',
+        success: function (response) {
+            $('#share-bar').shareBar({
+                articleId: id,
+                datas: {
+                    like: {
+                        checked: response.likeChecked,
+                        count: response.likeCount
+                    },
+                    favorite: {
+                        checked: response.favoriteChecked,
+                        count: response.favoriteCount
+                    }
+                }
+            });
+        },
+        error: function (response) {
+            $('#share-bar').shareBar({
+                articleId: id,
+                datas: {
+                    like: {
+                        checked: false,
+                        count: 0
+                    },
+                    favorite: {
+                        checked: false,
+                        count: 0
+                    }
+                }
+            });
+        }
+    });
+}
 function searchArticle() {
     var val = $('.input-search').val();
     if (val) {

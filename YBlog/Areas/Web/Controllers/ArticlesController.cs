@@ -58,7 +58,11 @@ namespace YBlog.Areas.Web.Controllers
                 ViewData["MetaKeywords"] = string.Join(",", tags.Select(x => x.Text).ToArray());
             }
             ViewData["MetaDescription"] = item.Description;
-            await _articleService.ReadAsync(item.Id, Request.CheckIsBot());
+            var isBot = Request.CheckIsBot();
+            if (isBot)
+            {
+                await _articleService.RecordBotAsync(item.Id);
+            }
             return View(item);
         }
         [HttpPost]

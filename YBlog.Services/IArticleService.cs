@@ -12,7 +12,8 @@ namespace YBlog.Services
         Task<bool> CreateAsync(ArticleRequest request, int userId);
         Task<bool> DeleteByIdAsync(int id);
         Task<bool> UpdateAsync(ArticleRequest request);
-        Task<bool> ReadAsync(int id, bool isBot);
+        Task<bool> ReadAsync(int id);
+        Task<bool> RecordBotAsync(int id);
         Task<List<Article>> GetRelatedAsync(int articleId, int take = 8);
         Task<List<Article>> GetAsync(ArticleTagPagedQuery query);
         Task<List<Article>> GetAllAsync();

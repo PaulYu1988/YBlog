@@ -31,41 +31,8 @@
             },
             hasCaptcha: true
         });
-        $.ajax({
-            type: 'GET',
-            url: '/articles/userinteractions/@(Model.Id)',
-            dataType: 'json',
-            success: function (response) {
-                $('#share-bar').shareBar({
-                    articleId: @(Model.Id),
-                    datas: {
-                        like: {
-                            checked: response.likeChecked,
-                            count: response.likeCount
-                        },
-                        favorite: {
-                            checked: response.favoriteChecked,
-                            count: response.favoriteCount
-                        }
-                    }
-                });
-            },
-            error: function (response) {
-                $('#share-bar').shareBar({
-                    articleId: @(Model.Id),
-                    datas: {
-                        like: {
-                            checked: false,
-                            count: 0
-                        },
-                        favorite: {
-                            checked: false,
-                            count: 0
-                        }
-                    }
-                });
-            }
-        });
+        renderUserInteractions(@(Model.Id));
+        readCount(@(Model.Id));
     </script>
 }
 <div class="layui-row layui-col-space15">

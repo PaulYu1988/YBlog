@@ -148,20 +148,17 @@ namespace YBlog.Services.Implement
             return result;
         }
 
-        public async Task<bool> ReadAsync(int id, bool isBot)
+        public async Task<bool> ReadAsync(int id)
         {
             var article = await _context.Articles.FirstOrDefaultAsync(x => x.Id == id);
             if (article == null)
                 return false;
             if (article.IsDeleted || article.Status != (int)EnumArticleStatuses.Publish)
                 return false;
-            if (!isBot)
-            {
-                article.ReadCount++;
-            }
-            var type = isBot ? EnumDailyStatisticTypes.ArticleBot : EnumDailyStatisticTypes.Article;
+            article.ReadCount++;
+            var type = (int)EnumDailyStatisticTypes.Article;
             var date = DateTime.Now.Date;
-            var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == (int)type && x.Date == date);
+            var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == type && x.Date == date);
             if (articleDailyStatistic != null)
             {
                 articleDailyStatistic.Count++;
@@ -171,7 +168,34 @@ namespace YBlog.Services.Implement
             {
                 articleDailyStatistic = new DailyStatistic()
                 {
-                    Type = (int)type,
+                    Type = type,
+                    Date = date,
+                    Count = 1
+                };
+                _context.DailyStatistics.Add(articleDailyStatistic);
+            }
+            if ((await _context.SaveChangesAsync()) > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> RecordBotAsync(int id)
+        {
+            var type = (int)EnumDailyStatisticTypes.ArticleBot;
+            var date = DateTime.Now.Date;
+            var articleDailyStatistic = await _context.DailyStatistics.FirstOrDefaultAsync(x => x.Type == type && x.Date == date);
+            if (articleDailyStatistic != null)
+            {
+                articleDailyStatistic.Count++;
+                articleDailyStatistic.LastModifiedAt = DateTime.Now;
+            }
+            else
+            {
+                articleDailyStatistic = new DailyStatistic()
+                {
+                    Type = type,
                     Date = date,
                     Count = 1
                 };
