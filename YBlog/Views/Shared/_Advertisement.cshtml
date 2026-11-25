@@ -1,4 +1,5 @@
 @inject ICacheService cacheService
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnvironment
 @model EnumAdvertisementCodes
 @{
     var showAd = true;
@@ -21,7 +22,7 @@
         }
         Context.Session.SetBool(EnumSessionNames.ShowAd.ToString(), showAd);
     }
-    if (showAd)
+    if (showAd && !WebHostEnvironment.IsDevelopment())
     {
         var advertisements = cacheService.GetAdvertisements();
         var curr = advertisements.FirstOrDefault(x => x.Code == Model.ToString());
