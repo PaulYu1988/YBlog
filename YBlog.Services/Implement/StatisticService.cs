@@ -14,15 +14,19 @@ namespace YBlog.Services.Implement
         }
         public DashboardView GetDashboardView()
         {
-            var currentProcess = Process.GetCurrentProcess();
-            long memoryUsage = currentProcess.WorkingSet64;
-            var dashboardView = new DashboardView()
+            DashboardView dashboardView;
+            using (var currentProcess = Process.GetCurrentProcess())
             {
-                MemoryUsage = memoryUsage / (1024 * 1024),
-                ProcessName = currentProcess.ProcessName
-            };
-            dashboardView.TodayRegisterCount = _context.Users.Count(x => x.CreatedAt.Date == DateTime.Now.Date);
-            dashboardView.TodayLoginCount = _context.Users.Count(x => x.LastLoginedAt.Date == DateTime.Now.Date);
+                dashboardView = new DashboardView()
+                {
+                    MemoryUsage = currentProcess.WorkingSet64 / (1024 * 1024),
+                    ProcessName = currentProcess.ProcessName
+                };
+            }
+            var today = DateTime.Now.Date;
+            var tomorrow = today.AddDays(1);
+            dashboardView.TodayRegisterCount = _context.Users.Count(x => x.CreatedAt >= today && x.CreatedAt < tomorrow);
+            dashboardView.TodayLoginCount = _context.Users.Count(x => x.LastLoginedAt >= today && x.LastLoginedAt < tomorrow);
             dashboardView.UserCount = _context.Users.Count();
             dashboardView.ArticleCount = _context.Articles.Count(x => x.IsDeleted == false);
             dashboardView.CommentCount = _context.Comments.Count(x => x.IsDeleted == false);

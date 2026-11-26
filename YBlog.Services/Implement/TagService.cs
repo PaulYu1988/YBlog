@@ -61,7 +61,7 @@ namespace YBlog.Services.Implement
 
         public async Task<List<Tag>> GetAllAsync()
         {
-            return await _context.Tags.ToListAsync();
+            return await _context.Tags.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Tag>> GetArticleTagsAsync(int articleId)
@@ -71,7 +71,7 @@ namespace YBlog.Services.Implement
                           on t1.Id equals t2.TagId
                           where t2.ArticleId == articleId
                           orderby t2.Sort
-                          select t1).ToListAsync();
+                          select t1).AsNoTracking().ToListAsync();
         }
 
         public async Task<Tag?> GetByIdAsync(int id)
@@ -132,7 +132,7 @@ namespace YBlog.Services.Implement
             {
                 queryable = queryable.Where(x => x.Text.Contains(query.Text));
             }
-            var items = await queryable.OrderByDescending(x => x.Id).ToPagedListAsync(query);
+            var items = await queryable.AsNoTracking().OrderByDescending(x => x.Id).ToPagedListAsync(query);
             return items;
         }
 

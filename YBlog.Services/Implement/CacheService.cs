@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -29,7 +30,13 @@ namespace YBlog.Services.Implement
             {
                 return cacheItems;
             }
-            var items = _context.Articles.Where(x => x.IsDeleted == false).OrderByDescending(x => x.ReadCount).Take(take).ToList();
+            var items = _context.Articles
+                .AsNoTracking()
+                .Where(x => x.IsDeleted == false)
+                .OrderByDescending(x => x.ReadCount)
+                .Select(x => new Article() { Id = x.Id, Title = x.Title })
+                .Take(take)
+                .ToList();
             if (items.Any() && items.Count >= take)
             {
                 _memoryCache.Set(cacheKey, items, TimeSpan.FromHours(4));
@@ -50,7 +57,7 @@ namespace YBlog.Services.Implement
                          on t.Id equals at.TagId
                          group t by new { t.Id, t.Text } into g
                          orderby g.Count() descending
-                         select new Tag() { Id = g.Key.Id, Text = g.Key.Text }).Take(take).ToList();
+                         select new Tag() { Id = g.Key.Id, Text = g.Key.Text }).AsNoTracking().Take(take).ToList();
             if (items.Any() && items.Count >= take)
             {
                 _memoryCache.Set(cacheKey, items, TimeSpan.FromHours(4));
@@ -66,7 +73,7 @@ namespace YBlog.Services.Implement
             {
                 return cacheItems;
             }
-            var navs = _context.Navs.Where(x => x.IsEnabled == true).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToList();
+            var navs = _context.Navs.AsNoTracking().Where(x => x.IsEnabled == true).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToList();
             _memoryCache.Set(cacheKey, navs, TimeSpan.FromDays(30));
             return navs;
         }
@@ -82,7 +89,7 @@ namespace YBlog.Services.Implement
             else
             {
                 var webConfig = new WebConfigView();
-                var webConfigList = _context.WebConfigs.ToList();
+                var webConfigList = _context.WebConfigs.AsNoTracking().ToList();
                 if (webConfigList.Any())
                 {
                     Type t = webConfig.GetType();
@@ -109,7 +116,7 @@ namespace YBlog.Services.Implement
             {
                 return cacheItems;
             }
-            var links = _context.Links.Where(x => x.IsEnabled == true).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToList();
+            var links = _context.Links.AsNoTracking().Where(x => x.IsEnabled == true).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToList();
             _memoryCache.Set(cacheKey, links, TimeSpan.FromDays(30));
             return links;
         }
@@ -258,7 +265,7 @@ namespace YBlog.Services.Implement
             {
                 return cacheAdvertisements;
             }
-            var advertisementList = _context.Advertisements.Where(x => x.IsEnabled == true).ToList();
+            var advertisementList = _context.Advertisements.AsNoTracking().Where(x => x.IsEnabled == true).ToList();
             _memoryCache.Set(cacheKey, advertisementList, TimeSpan.FromDays(30));
             return advertisementList;
         }
@@ -332,7 +339,7 @@ namespace YBlog.Services.Implement
             {
                 return cacheItems;
             }
-            var result = _context.Bots.ToList();
+            var result = _context.Bots.AsNoTracking().ToList();
             if (result.Any())
             {
                 _memoryCache.Set(cacheKey, result, TimeSpan.FromHours(8));

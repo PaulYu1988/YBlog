@@ -24,7 +24,7 @@ namespace YBlog.Services.Implement
         }
 
         public Task<List<Nav>> GetAllAsync() {
-            return _context.Navs.OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToListAsync();
+            return _context.Navs.AsNoTracking().OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(NavRequest request)

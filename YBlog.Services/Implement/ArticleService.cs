@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using YBlog.Models.Database;
 using YBlog.Models.Enums;
 using YBlog.Models.Queries;
@@ -11,6 +12,20 @@ namespace YBlog.Services.Implement
     {
         protected YBlogContext _context;
         protected ICategoryService _categoryService;
+        private static readonly Expression<Func<Article, Article>> ListProjection = x => new Article
+        {
+            Id = x.Id,
+            Title = x.Title,
+            Description = x.Description,
+            Thumbnail = x.Thumbnail,
+            CategoryId = x.CategoryId,
+            IsTop = x.IsTop,
+            Status = x.Status,
+            ReadCount = x.ReadCount,
+            CommentCount = x.CommentCount,
+            CreatedAt = x.CreatedAt,
+            LastModifiedAt = x.LastModifiedAt
+        };
         public ArticleService(YBlogContext context, ICategoryService categoryService)
         {
             _context = context;
@@ -59,7 +74,11 @@ namespace YBlog.Services.Implement
 
         public Task<List<Article>> GetAllAsync()
         {
-            return _context.Articles.Where(x => x.Status == (int)EnumArticleStatuses.Publish && x.IsDeleted == false).ToListAsync();
+            return _context.Articles
+                .AsNoTracking()
+                .Where(x => x.Status == (int)EnumArticleStatuses.Publish && x.IsDeleted == false)
+                .Select(x => new Article { Id = x.Id, LastModifiedAt = x.LastModifiedAt })
+                .ToListAsync();
         }
 
         public async Task<List<Article>> GetAsync(ArticlePagedQuery query)
@@ -93,7 +112,7 @@ namespace YBlog.Services.Implement
                     queryable = query.OrderDirection == EnumOrderDirections.Asc ? queryable.OrderByDescending(x => x.IsTop).ThenBy(x => x.Id) : queryable.OrderByDescending(x => x.IsTop).ThenByDescending(x => x.Id);
                     break;
             }
-            var items = await queryable.ToPagedListAsync(query);
+            var items = await queryable.Select(ListProjection).AsNoTracking().ToPagedListAsync(query);
             return items;
         }
 
@@ -111,7 +130,7 @@ namespace YBlog.Services.Implement
             {
                 queryable = queryable.Where(x => x.ArticleTags.TagId == query.TagId);
             }
-            var items = await queryable.OrderByDescending(x => x.ArticleTags.Id).Select(x => x.Article).ToPagedListAsync(query);
+            var items = await queryable.OrderByDescending(x => x.ArticleTags.Id).Select(x => x.Article).Select(ListProjection).AsNoTracking().ToPagedListAsync(query);
             return items;
         }
 
@@ -122,7 +141,11 @@ namespace YBlog.Services.Implement
 
         public Task<List<Article>> GetByIdsAsync(int[] ids)
         {
-            return _context.Articles.Where(x => ids.Contains(x.Id) && x.IsDeleted == false).ToListAsync();
+            return _context.Articles
+                .AsNoTracking()
+                .Where(x => ids.Contains(x.Id) && x.IsDeleted == false)
+                .Select(x => new Article { Id = x.Id, Title = x.Title, Status = x.Status })
+                .ToListAsync();
         }
 
         public async Task<List<Article>> GetRelatedAsync(int articleId, int take = 8)
@@ -144,14 +167,20 @@ namespace YBlog.Services.Implement
                 where a.Status == (int)EnumArticleStatuses.Publish && a.IsDeleted == false
                 orderby m.MatchPriority, Guid.NewGuid() descending
                 select a
-            ).Take(take).ToListAsync();
+            ).Select(ListProjection).AsNoTracking().Take(take).ToListAsync();
             result.AddRange(relatedArticles);
             int len = result.Count();
             if (len < take)
             {
                 var ids = result.Select(x => x.Id).ToList();
                 ids.Add(articleId);
-                var others = await _context.Articles.Where(x => x.Status == (int)EnumArticleStatuses.Publish && x.IsDeleted == false && !ids.Contains(x.Id)).OrderBy(x => Guid.NewGuid()).Take(take - len).ToListAsync();
+                var others = await _context.Articles
+                    .AsNoTracking()
+                    .Where(x => x.Status == (int)EnumArticleStatuses.Publish && x.IsDeleted == false && !ids.Contains(x.Id))
+                    .OrderBy(x => Guid.NewGuid())
+                    .Select(ListProjection)
+                    .Take(take - len)
+                    .ToListAsync();
                 result.AddRange(others);
             }
             return result;

@@ -33,7 +33,7 @@ namespace YBlog.Services.Implement
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.Where(x => !x.IsDeleted).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToListAsync();
+            return await _context.Categories.AsNoTracking().Where(x => !x.IsDeleted).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToListAsync();
         }
 
         public async Task<List<Category>> GetAsync(CategoryPagedQuery query)
@@ -43,7 +43,7 @@ namespace YBlog.Services.Implement
             {
                 queryable = queryable.Where(x => x.Name.Contains(query.Name));
             }
-            var items = await queryable.Where(x => x.IsDeleted == false).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToPagedListAsync(query);
+            var items = await queryable.AsNoTracking().Where(x => x.IsDeleted == false).OrderByDescending(x => x.Sort).ThenByDescending(x => x.Id).ToPagedListAsync(query);
             return items;
         }
 

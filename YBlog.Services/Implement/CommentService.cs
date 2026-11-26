@@ -87,14 +87,14 @@ namespace YBlog.Services.Implement
             {
                 queryable = queryable.Where(x => x.Status == query.Status);
             }
-            var comments = await queryable.Where(x => x.IsDeleted == false).OrderByDescending(x => x.Id).ToPagedListAsync(query);
+            var comments = await queryable.AsNoTracking().Where(x => x.IsDeleted == false).OrderByDescending(x => x.Id).ToPagedListAsync(query);
             if (comments.Any())
             {
                 var users = new List<User>();
                 var userIds = comments.Where(x => x.UserId.HasValue).Select(x => x.UserId).Distinct().ToArray();
                 if (userIds.Any())
                 {
-                    users = _context.Users.Where(x => userIds.Contains(x.Id)).ToList();
+                    users = _context.Users.AsNoTracking().Where(x => userIds.Contains(x.Id)).ToList();
                 }
                 foreach (var comment in comments)
                 {
