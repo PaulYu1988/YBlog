@@ -128,12 +128,21 @@ namespace YBlog.Services.Implement
         public async Task<List<Article>> GetRelatedAsync(int articleId, int take = 8)
         {
             var result = new List<Article>();
+            var relatedQuery =
+                from at1 in _context.ArticleTags
+                join at2 in _context.ArticleTags on at1.TagId equals at2.TagId
+                where at2.ArticleId == articleId && at1.ArticleId != articleId
+                group at2 by at1.ArticleId into g
+                select new
+                {
+                    ArticleId = g.Key,
+                    MatchPriority = g.Min(x => x.Id)
+                };
             var relatedArticles = await (
                 from a in _context.Articles
-                join at1 in _context.ArticleTags on a.Id equals at1.ArticleId
-                join at2 in _context.ArticleTags on at1.TagId equals at2.TagId
-                where a.Id != articleId && a.Status == 2 && at2.ArticleId == articleId
-                orderby Guid.NewGuid()
+                join m in relatedQuery on a.Id equals m.ArticleId
+                where a.Status == (int)EnumArticleStatuses.Publish && a.IsDeleted == false
+                orderby m.MatchPriority, Guid.NewGuid() descending
                 select a
             ).Take(take).ToListAsync();
             result.AddRange(relatedArticles);
@@ -142,7 +151,7 @@ namespace YBlog.Services.Implement
             {
                 var ids = result.Select(x => x.Id).ToList();
                 ids.Add(articleId);
-                var others = await _context.Articles.Where(x => x.Status == 2 && x.IsDeleted == false && !ids.Contains(x.Id)).OrderBy(x => Guid.NewGuid()).Take(take - len).ToListAsync();
+                var others = await _context.Articles.Where(x => x.Status == (int)EnumArticleStatuses.Publish && x.IsDeleted == false && !ids.Contains(x.Id)).OrderBy(x => Guid.NewGuid()).Take(take - len).ToListAsync();
                 result.AddRange(others);
             }
             return result;
