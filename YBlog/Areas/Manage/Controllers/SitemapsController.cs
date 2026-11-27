@@ -49,11 +49,16 @@ namespace YBlog.Areas.Manage.Controllers
             sb.Append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
             sb.Append("<url>");
             sb.AppendFormat("<loc>{0}</loc>", EscapeXml(SiteAddress));
-            sb.AppendFormat("<lastmod>{0}</lastmod>", DateTime.Now.ToString("yyyy-MM-dd"));
-            sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.always);
+            var clist = await _categoryService.GetAllAsync();
+            var alist = await _articleService.GetAllAsync();
+            var lastModifiedAt = GetLatestModifiedAt(clist.Select(x => x.LastModifiedAt).Concat(alist.Select(x => x.LastModifiedAt)));
+            if (lastModifiedAt.HasValue)
+            {
+                sb.AppendFormat("<lastmod>{0}</lastmod>", lastModifiedAt.Value.ToString("yyyy-MM-dd"));
+            }
+            sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.daily);
             sb.AppendFormat("<priority>{0}</priority>", "1.0");
             sb.Append("</url>");
-            var clist = await _categoryService.GetAllAsync();
             if (clist.Any())
             {
                 foreach (var c in clist)
@@ -62,13 +67,12 @@ namespace YBlog.Areas.Manage.Controllers
                     txtSb.AppendLine(cUrl);
                     sb.Append("<url>");
                     sb.AppendFormat("<loc>{0}</loc>", EscapeXml(cUrl));
-                    sb.AppendFormat("<lastmod>{0}</lastmod>", DateTime.Now.ToString("yyyy-MM-dd"));
-                    sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.daily);
+                    sb.AppendFormat("<lastmod>{0}</lastmod>", c.LastModifiedAt.ToString("yyyy-MM-dd"));
+                    sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.weekly);
                     sb.AppendFormat("<priority>{0}</priority>", "0.9");
                     sb.Append("</url>");
                 }
             }
-            var alist = await _articleService.GetAllAsync();
             if (alist.Any())
             {
                 foreach (var a in alist)
@@ -78,7 +82,7 @@ namespace YBlog.Areas.Manage.Controllers
                     sb.Append("<url>");
                     sb.AppendFormat("<loc>{0}</loc>", EscapeXml(aUrl));
                     sb.AppendFormat("<lastmod>{0}</lastmod>", a.LastModifiedAt.ToString("yyyy-MM-dd"));
-                    sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.weekly);
+                    sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.monthly);
                     sb.AppendFormat("<priority>{0}</priority>", "0.8");
                     sb.Append("</url>");
                 }
@@ -110,6 +114,14 @@ namespace YBlog.Areas.Manage.Controllers
         private static string EscapeXml(string value)
         {
             return SecurityElement.Escape(value) ?? string.Empty;
+        }
+        private static DateTime? GetLatestModifiedAt(IEnumerable<DateTime> values)
+        {
+            if (!values.Any())
+            {
+                return null;
+            }
+            return values.Max();
         }
 
         public enum Changefreq
