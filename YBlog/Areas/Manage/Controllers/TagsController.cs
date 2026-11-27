@@ -13,10 +13,12 @@ namespace YBlog.Areas.Manage.Controllers
     {
         protected ITagService _tagService;
         protected IOperationService _operationService;
-        public TagsController(ITagService tagService, IOperationService operationService)
+        protected ICacheService _cacheService;
+        public TagsController(ITagService tagService, IOperationService operationService, ICacheService cacheService)
         {
             _tagService = tagService;
             _operationService = operationService;
+            _cacheService = cacheService;
         }
         public async Task<IActionResult> IndexAsync(TagPagedQuery query)
         {
@@ -37,6 +39,7 @@ namespace YBlog.Areas.Manage.Controllers
             var result = await _tagService.DeleteByIdAsync(id);
             if (result)
             {
+                _cacheService.Clear(EnumCacheNames.HotTags);
                 var userState = Request.GetUserState();
                 await _operationService.CreateAsync(userState.Id, EnumOperationTypes.Delete, EnumOperationReferenceTypes.Tag, id, curr.Text);
                 return this.Success();

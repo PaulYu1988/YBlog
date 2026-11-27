@@ -30,7 +30,12 @@ namespace YBlog.Areas.Account.Controllers
             if (userCredential?.Password != request.Password.ToMD5())
                 return this.Error(EnumErrorCodes.IncorrectPassword);
             var result = await _userService.ChangePasswordAsync(userState.Id, request.NewPassword.ToMD5());
-            return result ? this.Success() : this.InternalServerError();
+            if (!result)
+            {
+                return this.InternalServerError();
+            }
+            await _userService.RevokeTokenAsync(userState.Id);
+            return this.Success();
         }
     }
 }

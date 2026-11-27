@@ -53,8 +53,9 @@ namespace YBlog.Services.Implement
                 return cacheItems;
             }
             var items = (from t in _context.Tags
-                         join at in _context.ArticleTags
-                         on t.Id equals at.TagId
+                         join at in _context.ArticleTags on t.Id equals at.TagId
+                         join a in _context.Articles on at.ArticleId equals a.Id
+                         where a.Status == (int)EnumArticleStatuses.Publish && a.IsDeleted == false
                          group t by new { t.Id, t.Text } into g
                          orderby g.Count() descending
                          select new Tag() { Id = g.Key.Id, Text = g.Key.Text }).AsNoTracking().Take(take).ToList();

@@ -107,6 +107,7 @@ namespace YBlog.Areas.Manage.Controllers
             var result = await _navService.DeleteByIdAsync(id);
             if (result)
             {
+                _cacheService.Clear(EnumCacheNames.Navs);
                 var userState = Request.GetUserState();
                 await _operationService.CreateAsync(userState.Id, EnumOperationTypes.Delete, EnumOperationReferenceTypes.Nav, id, $"{curr.Text} {curr.Url}");
                 return this.Success();

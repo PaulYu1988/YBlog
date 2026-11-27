@@ -85,7 +85,10 @@ namespace YBlog.Areas.Manage.Controllers
             htmlSanitizer.AllowedTags.Add("pre");
             htmlSanitizer.AllowedAttributes.Add("class");
             request.ArticleContent = htmlSanitizer.Sanitize(request.ArticleContent ?? string.Empty);
-            await GenerateThumbnailAsync(request);
+            if (!await GenerateThumbnailAsync(request))
+            {
+                return this.BadRequest();
+            }
             var success = false;
             if (request.Id.HasValue)
             {
@@ -105,7 +108,13 @@ namespace YBlog.Areas.Manage.Controllers
                     await _tagService.CreateArticleTagsAsync(request.Tags ?? string.Empty, request.Id.Value);
                 }
             }
-            return success ? this.Success(request) : this.InternalServerError();
+            if (success)
+            {
+                _cacheService.Clear(EnumCacheNames.TopArticles);
+                _cacheService.Clear(EnumCacheNames.HotTags);
+                return this.Success(request);
+            }
+            return this.InternalServerError();
         }
         [HttpDelete]
         public async Task<IActionResult> IndexAsync(int id)
@@ -118,18 +127,24 @@ namespace YBlog.Areas.Manage.Controllers
             var result = await _articleService.DeleteByIdAsync(id);
             if (result)
             {
+                _cacheService.Clear(EnumCacheNames.TopArticles);
+                _cacheService.Clear(EnumCacheNames.HotTags);
                 var userState = Request.GetUserState();
                 await _operationService.CreateAsync(userState.Id, EnumOperationTypes.Delete, EnumOperationReferenceTypes.Article, id, curr.Title);
                 return this.Success();
             }
             return this.InternalServerError();
         }
-        private async Task GenerateThumbnailAsync(ArticleRequest request)
+        private async Task<bool> GenerateThumbnailAsync(ArticleRequest request)
         {
             if (HttpContext.Request.Form.Files.Count > 0)
             {
                 var file = HttpContext.Request.Form.Files[0];
-                var extension = Path.GetExtension(file.FileName);
+                if (!await file.IsValidImageAsync())
+                {
+                    return false;
+                }
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
                 var newFileName = $"{DateTime.Now.ToString("HHmmssfff")}{extension}";
                 var path = $"{DateTime.Now.ToString("yyyyMMdd")}";
                 var url = $"/upload/{path}/{newFileName}";
@@ -146,7 +161,7 @@ namespace YBlog.Areas.Manage.Controllers
                 request.Thumbnail = url;
             }
             if (!string.IsNullOrWhiteSpace(request.Thumbnail))
-                return;
+                return true;
             uint targetWidth = 240;
             uint targetHeight = 160;
             uint newWidth = 0;
@@ -154,7 +169,7 @@ namespace YBlog.Areas.Manage.Controllers
             Regex reg = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
             MatchCollection ms = reg.Matches(request.ArticleContent ?? string.Empty);
             if (ms.Count <= 0)
-                return;
+                return true;
             foreach (Match m in ms)
             {
                 string firstImg = m.Groups["imgUrl"].Value;
@@ -218,6 +233,7 @@ namespace YBlog.Areas.Manage.Controllers
                     }
                 }
             }
+            return true;
         }
     }
 }

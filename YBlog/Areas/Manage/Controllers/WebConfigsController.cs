@@ -42,8 +42,12 @@ namespace YBlog.Areas.Manage.Controllers
             {
                 foreach (var file in HttpContext.Request.Form.Files)
                 {
+                    if (!await file.IsValidImageAsync())
+                    {
+                        return this.BadRequest();
+                    }
                     var name = file.Name;
-                    var extension = Path.GetExtension(file.FileName);
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
                     var newFileName = $"{DateTime.Now.ToString("HHmmssfff")}{extension}";
                     var path = $"{DateTime.Now.ToString("yyyyMMdd")}";
                     var url = $"/upload/{path}/{userState.Id}/{newFileName}";

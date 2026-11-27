@@ -51,7 +51,11 @@ namespace YBlog.Areas.Account.Controllers
             if (HttpContext.Request.Form.Files.Count > 0)
             {
                 var file = HttpContext.Request.Form.Files[0];
-                var extension = Path.GetExtension(file.FileName);
+                if (!await file.IsValidImageAsync())
+                {
+                    return this.BadRequest();
+                }
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
                 var newFileName = $"{request.Id}-{DateTime.Now.ToString("HHmmssfff")}{extension}";
                 var url = $"/upload/avatars/{newFileName}";
                 var filePath = $"{_env.WebRootPath}\\upload\\avatars";

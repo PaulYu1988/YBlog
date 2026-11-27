@@ -126,6 +126,7 @@ namespace YBlog.Services.Implement
                                 ArticleTags = at,
                                 Article = a
                             };
+            queryable = queryable.Where(x => x.Article.Status == (int)EnumArticleStatuses.Publish && x.Article.IsDeleted == false);
             if (query.TagId.HasValue)
             {
                 queryable = queryable.Where(x => x.ArticleTags.TagId == query.TagId);

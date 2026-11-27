@@ -95,6 +95,11 @@ namespace YBlog.Services.Mock
             return Task.FromResult(true);
         }
 
+        public Task<bool> RevokeTokenAsync(int userId)
+        {
+            return Task.FromResult(true);
+        }
+
         public Task<User?> UpdateLastLoginedAtAsync(int id)
         {
             return Task.FromResult(GetMockList().FirstOrDefault(x => x.Id == id));

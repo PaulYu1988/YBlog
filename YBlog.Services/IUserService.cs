@@ -15,6 +15,7 @@ namespace YBlog.Services
         Task<UserCredential?> GetUserCredentialByUserId(int id);
         Task<List<User>> GetAsync(UserPagedQuery query);
         Task<bool> ChangePasswordAsync(int id, string password);
+        Task<bool> RevokeTokenAsync(int userId);
         Task<User?> UpdateLastLoginedAtAsync(int id);
         Task<List<UserCredential>> GetUserCredentialsByUserIds(int[] ids);
     }

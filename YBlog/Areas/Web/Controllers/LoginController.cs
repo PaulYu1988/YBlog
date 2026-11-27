@@ -77,14 +77,22 @@ namespace YBlog.Areas.Web.Controllers
             {
                 Request.HttpContext.Response.Cookies.Append(EnumCookieNames.Token.ToString(), token, new CookieOptions
                 {
-                    Expires = DateTime.Now.AddDays(30)
+                    Expires = DateTime.Now.AddDays(30),
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/"
                 });
             }
             else
             {
                 Request.HttpContext.Response.Cookies.Append(EnumCookieNames.Token.ToString(), string.Empty, new CookieOptions
                 {
-                    Expires = DateTime.Now
+                    Expires = DateTime.Now,
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/"
                 });
             }
             var from = Request.HttpContext.Session.GetString(EnumSessionNames.From.ToString());

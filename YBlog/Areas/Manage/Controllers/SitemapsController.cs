@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security;
 using System.Text;
 using YBlog.Attributes;
 using YBlog.Extensions;
@@ -47,7 +48,7 @@ namespace YBlog.Areas.Manage.Controllers
             sb.Append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
             sb.Append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
             sb.Append("<url>");
-            sb.AppendFormat("<loc>{0}</loc>", SiteAddress);
+            sb.AppendFormat("<loc>{0}</loc>", EscapeXml(SiteAddress));
             sb.AppendFormat("<lastmod>{0}</lastmod>", DateTime.Now.ToString("yyyy-MM-dd"));
             sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.always);
             sb.AppendFormat("<priority>{0}</priority>", "1.0");
@@ -60,7 +61,7 @@ namespace YBlog.Areas.Manage.Controllers
                     var cUrl = SiteAddress + Url.Content("~/categories/" + c.Id);
                     txtSb.AppendLine(cUrl);
                     sb.Append("<url>");
-                    sb.AppendFormat("<loc>{0}</loc>", cUrl);
+                    sb.AppendFormat("<loc>{0}</loc>", EscapeXml(cUrl));
                     sb.AppendFormat("<lastmod>{0}</lastmod>", DateTime.Now.ToString("yyyy-MM-dd"));
                     sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.daily);
                     sb.AppendFormat("<priority>{0}</priority>", "0.9");
@@ -75,7 +76,7 @@ namespace YBlog.Areas.Manage.Controllers
                     var aUrl = SiteAddress + Url.Content("~/articles/" + a.Id);
                     txtSb.AppendLine(aUrl);
                     sb.Append("<url>");
-                    sb.AppendFormat("<loc>{0}</loc>", aUrl);
+                    sb.AppendFormat("<loc>{0}</loc>", EscapeXml(aUrl));
                     sb.AppendFormat("<lastmod>{0}</lastmod>", a.LastModifiedAt.ToString("yyyy-MM-dd"));
                     sb.AppendFormat("<changefreq>{0}</changefreq>", Changefreq.weekly);
                     sb.AppendFormat("<priority>{0}</priority>", "0.8");
@@ -106,6 +107,11 @@ namespace YBlog.Areas.Manage.Controllers
             }
             return this.Success();
         }
+        private static string EscapeXml(string value)
+        {
+            return SecurityElement.Escape(value) ?? string.Empty;
+        }
+
         public enum Changefreq
         {
             always,

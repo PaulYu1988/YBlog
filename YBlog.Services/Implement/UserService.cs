@@ -124,6 +124,19 @@ namespace YBlog.Services.Implement
             return result;
         }
 
+        public async Task<bool> RevokeTokenAsync(int userId)
+        {
+            var curr = await _context.UserCredentials.FirstOrDefaultAsync(x => x.UserId == userId);
+            if (curr == null)
+            {
+                return false;
+            }
+            curr.Token = string.Empty;
+            curr.TokenExpirationTime = DateTime.Now;
+            curr.LastModifiedAt = DateTime.Now;
+            return (await _context.SaveChangesAsync()) > 0;
+        }
+
         public async Task<User?> UpdateLastLoginedAtAsync(int id)
         {
             var curr = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);

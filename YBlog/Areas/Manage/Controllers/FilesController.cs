@@ -24,8 +24,12 @@ namespace YBlog.Areas.Manage.Controllers
             ViewBag.Path = path;
             var fileItems = new List<FileItem>();
             var directoryItems = new List<DirectoryItem>();
-            var filePath = _env.WebRootPath;
-            var currPath = string.IsNullOrWhiteSpace(path) ? filePath : filePath + path;
+            var filePath = Path.GetFullPath(_env.WebRootPath);
+            var currPath = ResolvePath(path);
+            if (currPath == null)
+            {
+                return this.NotFound();
+            }
             if (Directory.Exists(currPath))
             {
                 ViewBag.Exists = true;
@@ -80,8 +84,11 @@ namespace YBlog.Areas.Manage.Controllers
                 return this.BadRequest();
             }
             var userState = Request.GetUserState();
-            var filePath = _env.WebRootPath;
-            var currPath = filePath + id;
+            var currPath = ResolvePath(id);
+            if (currPath == null)
+            {
+                return this.NotFound();
+            }
             if (System.IO.File.Exists(currPath))
             {
                 try
@@ -98,6 +105,26 @@ namespace YBlog.Areas.Manage.Controllers
             else
             {
                 return this.NotFound();
+            }
+        }
+
+        private string? ResolvePath(string? relativePath)
+        {
+            try
+            {
+                var webRoot = Path.GetFullPath(_env.WebRootPath);
+                var rel = (relativePath ?? string.Empty).TrimStart('/', '\\');
+                var fullPath = Path.GetFullPath(Path.Combine(webRoot, rel));
+                if (!fullPath.Equals(webRoot, StringComparison.OrdinalIgnoreCase) &&
+                    !fullPath.StartsWith(webRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+                return fullPath;
+            }
+            catch
+            {
+                return null;
             }
         }
     }
